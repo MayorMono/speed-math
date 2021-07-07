@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Maths</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="third_fragment_label">Third Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="title">Maths: The Most Interesting Math Game Ever</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="high_score">High Score</string>
+    <string name="start">Start</string>
+    <string name="submit">Submit</string>
+    <string name="game_over">Game Over</string>
+    <string name="retry">Retry</string>
+    <string name="quit">Quit</string>
+    <string name="score">Score</string>
+    <string name="curr_score_text">Score:</string>
+    <string name="easy">Easy</string>
+    <string name="hard">Hard</string>
+    <string name="time">Time:</string>
+    <string name="fastest_time">Fastest Time</string>
+    <string name="time_without_colon">Time</string>
+</resources>
