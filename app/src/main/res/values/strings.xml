@@ -23,4 +23,6 @@
     <string name="time">Time:</string>
     <string name="fastest_time">Fastest Time</string>
     <string name="time_without_colon">Time</string>
+    <string name="easy_complete">Easy Mode Complete</string>
+    <string name="hard_complete">Hard Mode Complete</string>
 </resources>

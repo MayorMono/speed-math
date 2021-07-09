@@ -45,10 +45,6 @@ class TitleFragment : Fragment() {
             // File not found
         }
 
-//        binding.highScore.text = highScoreEasy.toString()
-
-
-//        binding.highScore.text = bestTimeEasyString
         if (difficulty == 0) {
             binding.easy.isChecked = true
             binding.highScore.text = bestTimeEasyString
@@ -62,8 +58,6 @@ class TitleFragment : Fragment() {
         binding.buttonStart.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
-
-//        binding.score.text = highScore.toString()
     }
 
     override fun onDestroyView() {
@@ -116,18 +110,5 @@ class TitleFragment : Fragment() {
             secondsEasy.toString()
         }
         bestTimeEasyString = stringMinutesEasy.plus(":").plus(stringSecondsEasy).plus(decimalStringEasy)
-    }
-
-//    private fun loadHighScore() {
-//        val score: List<String>? =
-//            context?.openFileInput("highScore")?.bufferedReader()?.useLines {
-//                it.toList()
-//            }
-//        hardTime = score?.get(1).toString()
-//        easyTime = score?.get(3).toString()
-//    }
-
-    private fun calculateTime() {
-
     }
 }

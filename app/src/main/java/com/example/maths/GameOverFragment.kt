@@ -28,7 +28,7 @@ class GameOverFragment: Fragment() {
     ): View? {
 
         _binding = FragmentGameOverBinding.inflate(inflater, container, false)
-//        binding.highScore.text = currScore.toString()
+
         if (currScore == 20) {
             binding.scoreText.isInvisible = false
             binding.highScore.isInvisible = false
@@ -56,10 +56,10 @@ class GameOverFragment: Fragment() {
             binding.highScore.text = result
 
             if (MainActivity.difficulty == 0) {
-                binding.titleText.text = "Easy Mode Complete"
+                binding.titleText.text = getString(R.string.easy_complete)
                 bestTimeEasyString = result
             } else {
-                binding.titleText.text = "Hard Mode Complete"
+                binding.titleText.text = getString(R.string.hard_complete)
                 bestTimeHardString = result
             }
 

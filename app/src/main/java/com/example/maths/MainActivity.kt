@@ -1,25 +1,20 @@
 package com.example.maths
 
+import android.app.UiModeManager.MODE_NIGHT_YES
 import android.os.Bundle
-import android.os.CountDownTimer
-import com.google.android.material.snackbar.Snackbar
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.RadioButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.isInvisible
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.Chronometer
-import android.widget.RadioButton
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.view.isInvisible
 import com.example.maths.databinding.ActivityMainBinding
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.lang.Float.POSITIVE_INFINITY
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,6 +42,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
 
         supportActionBar?.hide()
     }
@@ -81,14 +78,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.easy ->
                     if (checked) {
                         difficulty = 0
-//                        scoreText.text = highScoreEasy.toString()
                         scoreText.text = bestTimeEasyString
                         scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
                     }
                 R.id.hard ->
                     if (checked) {
                         difficulty = 1
-//                        scoreText.text = highScoreHard.toString()
                         scoreText.text = bestTimeHardString
                         scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
                     }
