@@ -1,10 +1,13 @@
 package com.example.maths
 
+import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.maths.MainActivity.Companion.currScore
@@ -48,8 +51,30 @@ class QuestionFragment : Fragment() {
         }
         currScore = 0
         binding.currScore.text = currScore.toString().plus("/20")
+        binding.userAnswer.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            when {
+                ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.action == KeyEvent.ACTION_DOWN)) -> {
+                    try {
+                        submitAnswer(view)
+                    } catch (e: NumberFormatException) {
+                        endGame()
+                    }
+                    return@OnKeyListener true
+                }
+                else -> false
+            }
+
+        })
+        showKeyboard()
         createQuestion(view)
         binding.chronometer.start()
+    }
+
+    private fun showKeyboard() {
+        binding.userAnswer.requestFocus()
+        val imm: InputMethodManager =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.userAnswer, InputMethodManager.SHOW_IMPLICIT)
     }
 
     override fun onDestroyView() {
