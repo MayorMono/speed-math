@@ -71,11 +71,11 @@ class QuestionFragment : Fragment() {
         var second = 0
 
         if (difficulty == 0) {
-            first = (1 until 100).random()
-            second = (1 until 100).random()
+            first = (0 until 100).random()
+            second = (0 until 100).random()
         } else if (difficulty == 1) {
-            first = (1 until 1000).random()
-            second = (1 until 1000).random()
+            first = (0 until 1000).random()
+            second = (0 until 1000).random()
         }
 
         currAnswer = first + second
@@ -89,11 +89,11 @@ class QuestionFragment : Fragment() {
         var second = 0
 
         if (difficulty == 0) {
-            first = (1 until 10).random()
-            second = (1 until 10).random()
+            first = (0 until 10).random()
+            second = (0 until 10).random()
         } else if (difficulty == 1) {
-            first = (1 until 13).random()
-            second = (1 until 13).random()
+            first = (0 until 13).random()
+            second = (0 until 13).random()
         }
 
         currAnswer = first * second
