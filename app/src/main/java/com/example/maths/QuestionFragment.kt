@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -51,20 +52,19 @@ class QuestionFragment : Fragment() {
         }
         currScore = 0
         binding.currScore.text = currScore.toString().plus("/20")
-        binding.userAnswer.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
-            when {
-                ((keyCode == KeyEvent.KEYCODE_ENTER) && (event.action == KeyEvent.ACTION_DOWN)) -> {
-                    try {
-                        submitAnswer(view)
-                    } catch (e: NumberFormatException) {
-                        endGame()
-                    }
-                    return@OnKeyListener true
+        binding.userAnswer.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                try {
+                    submitAnswer(view)
+                } catch (e: NumberFormatException) {
+                    endGame()
                 }
-                else -> false
+                true
+            } else {
+                false
             }
+        }
 
-        })
         showKeyboard()
         createQuestion(view)
         binding.chronometer.start()
