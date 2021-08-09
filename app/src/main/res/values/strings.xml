@@ -25,4 +25,5 @@
     <string name="time_without_colon">Time</string>
     <string name="easy_complete">Easy Mode Complete</string>
     <string name="hard_complete">Hard Mode Complete</string>
+    <string name="version">1.2.0</string>
 </resources>
