@@ -12,6 +12,7 @@ import com.example.maths.MainActivity.Companion.bestTimeEasyString
 import com.example.maths.MainActivity.Companion.bestTimeHard
 import com.example.maths.MainActivity.Companion.bestTimeHardString
 import com.example.maths.MainActivity.Companion.difficulty
+import com.example.maths.MainActivity.Companion.formatTime
 import com.example.maths.databinding.FragmentTitleBinding
 import java.io.FileNotFoundException
 
@@ -73,42 +74,7 @@ class TitleFragment : Fragment() {
         bestTimeHard = score?.get(0)?.toLong()!!
         bestTimeEasy = score?.get(1)?.toLong()!!
 
-        val minutesHard = bestTimeHard / 1000 /60
-        var stringMinutesHard = ""
-        val secondsHard = bestTimeHard / 1000 % 60
-        var stringSecondsHard = ""
-
-        // Calculate decimal part of seconds
-        val doubleMinutesHardRaw: Double = bestTimeHard.toDouble() / 1000
-        val doubleMinutesHardString = doubleMinutesHardRaw.toString()
-        val decimalStringHard = doubleMinutesHardString.substring(doubleMinutesHardString.indexOf("."))
-
-        stringMinutesHard = minutesHard.toString()
-
-        stringSecondsHard = if (secondsHard < 10) {
-            "0".plus(secondsHard.toString())
-        } else {
-            secondsHard.toString()
-        }
-        bestTimeHardString = stringMinutesHard.plus(":").plus(stringSecondsHard).plus(decimalStringHard)
-
-        val minutesEasy = bestTimeEasy / 1000 /60
-        var stringMinutesEasy = ""
-        val secondsEasy = bestTimeEasy / 1000 % 60
-        var stringSecondsEasy = ""
-
-        // Calculate decimal part of seconds
-        val doubleMinutesEasyRaw: Double = bestTimeEasy.toDouble() / 1000
-        val doubleMinutesEasyString = doubleMinutesEasyRaw.toString()
-        val decimalStringEasy = doubleMinutesEasyString.substring(doubleMinutesEasyString.indexOf("."))
-
-        stringMinutesEasy = minutesEasy.toString()
-
-        stringSecondsEasy = if (secondsEasy < 10) {
-            "0".plus(secondsEasy.toString())
-        } else {
-            secondsEasy.toString()
-        }
-        bestTimeEasyString = stringMinutesEasy.plus(":").plus(stringSecondsEasy).plus(decimalStringEasy)
+        bestTimeHardString = formatTime(bestTimeHard)
+        bestTimeEasyString = formatTime(bestTimeEasy)
     }
 }
