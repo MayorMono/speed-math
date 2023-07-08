@@ -14,6 +14,7 @@ import com.example.maths.MainActivity.Companion.bestTimeHardString
 import com.example.maths.databinding.FragmentGameOverBinding
 import com.example.maths.MainActivity.Companion.currScore
 import com.example.maths.MainActivity.Companion.gameTime
+import com.example.maths.MainActivity.Companion.formatTime
 
 class GameOverFragment: Fragment() {
     private var _binding: FragmentGameOverBinding? = null
@@ -35,32 +36,16 @@ class GameOverFragment: Fragment() {
 
             saveTimes()
 
-            val minutes = gameTime / 1000 /60
-            var stringMinutes = ""
-            val seconds = gameTime / 1000 % 60
-            var stringSeconds = ""
+            val gameTimeFormatted = formatTime(gameTime)
 
-            val doubleMinutesRaw: Double = gameTime.toDouble() / 1000
-            val doubleMinutesString = doubleMinutesRaw.toString()
-            val decimalString = doubleMinutesString.substring(doubleMinutesString.indexOf("."))
-
-            stringMinutes = minutes.toString()
-
-            stringSeconds = if (seconds < 10) {
-                "0".plus(seconds.toString())
-            } else {
-                seconds.toString()
-            }
-            val result: String = stringMinutes.plus(":").plus(stringSeconds).plus(decimalString)
-
-            binding.highScore.text = result
+            binding.highScore.text = gameTimeFormatted
 
             if (MainActivity.difficulty == 0) {
                 binding.titleText.text = getString(R.string.easy_complete)
-                bestTimeEasyString = result
+                bestTimeEasyString = gameTimeFormatted
             } else {
                 binding.titleText.text = getString(R.string.hard_complete)
-                bestTimeHardString = result
+                bestTimeHardString = gameTimeFormatted
             }
 
         } else {

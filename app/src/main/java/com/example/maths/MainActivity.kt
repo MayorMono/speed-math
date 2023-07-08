@@ -29,6 +29,25 @@ class MainActivity : AppCompatActivity() {
         var currScore = 0
         var difficulty = 0
         var gameTime: Long = 0
+
+        fun formatTime(ms: Long): String {
+            val minutes = ms / 1000 /60
+            val seconds = ms / 1000 % 60
+
+            // Calculate decimal part of seconds
+            val doubleMinutesRaw: Double = ms.toDouble() / 1000
+            val doubleMinutesString = doubleMinutesRaw.toString()
+            val decimalStringHard = doubleMinutesString.substring(doubleMinutesString.indexOf("."))
+
+            val stringMinutes = minutes.toString()
+
+            val stringSeconds = if (seconds < 10) {
+                "0".plus(seconds.toString())
+            } else {
+                seconds.toString()
+            }
+            return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_YES)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
 
         supportActionBar?.hide()
     }
