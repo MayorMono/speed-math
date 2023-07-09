@@ -26,4 +26,7 @@
     <string name="easy_complete">Easy Mode Complete</string>
     <string name="hard_complete">Hard Mode Complete</string>
     <string name="version">1.2.0</string>
+    <string name="author">MayorMono</string>
+    <string name="text_mode">Text</string>
+    <string name="audio_mode">Audio</string>
 </resources>

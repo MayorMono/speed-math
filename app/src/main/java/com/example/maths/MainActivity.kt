@@ -2,6 +2,7 @@ package com.example.maths
 
 import android.app.UiModeManager.MODE_NIGHT_YES
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         var bestTimeEasyString: String = ""
         var currScore = 0
         var difficulty = 0
+        var gameMode = 0
         var gameTime: Long = 0
 
         fun formatTime(ms: Long): String {
@@ -48,6 +50,8 @@ class MainActivity : AppCompatActivity() {
             }
             return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
         }
+
+        var tts: TextToSpeech? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,6 +109,22 @@ class MainActivity : AppCompatActivity() {
                         difficulty = 1
                         scoreText.text = bestTimeHardString
                         scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                    }
+            }
+        }
+    }
+
+    fun setGameMode(view: View) {
+        if (view is RadioButton) {
+            val checked = view.isChecked
+            when (view.getId()) {
+                R.id.text_mode ->
+                    if (checked) {
+                        gameMode = 0
+                    }
+                R.id.audio_mode ->
+                    if (checked) {
+                        gameMode = 1
                     }
             }
         }

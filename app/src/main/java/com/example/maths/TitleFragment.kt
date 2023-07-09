@@ -1,6 +1,7 @@
 package com.example.maths
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,11 @@ import com.example.maths.MainActivity.Companion.bestTimeHard
 import com.example.maths.MainActivity.Companion.bestTimeHardString
 import com.example.maths.MainActivity.Companion.difficulty
 import com.example.maths.MainActivity.Companion.formatTime
+import com.example.maths.MainActivity.Companion.gameMode
+import com.example.maths.MainActivity.Companion.tts
 import com.example.maths.databinding.FragmentTitleBinding
 import java.io.FileNotFoundException
+import java.util.Locale
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -56,8 +60,23 @@ class TitleFragment : Fragment() {
             binding.highScore.isInvisible = bestTimeHard.compareTo(0) == 0
         }
 
+        if (gameMode == 0) {
+            binding.textMode.isChecked = true
+        } else {
+            binding.audioMode.isChecked = true
+        }
+
         binding.buttonStart.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+
+        if (tts == null) {
+            tts = TextToSpeech(activity, TextToSpeech.OnInitListener { status ->
+                if (status != TextToSpeech.ERROR) {
+                    tts!!.language = Locale.US
+                    binding.gameMode.isEnabled = true
+                }
+            })
         }
     }
 
