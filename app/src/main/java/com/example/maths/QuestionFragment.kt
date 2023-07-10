@@ -53,13 +53,6 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.buttonSecond.setOnClickListener {
-//            try {
-//                submitAnswer(view)
-//            } catch (e: NumberFormatException) {
-//                endGame()
-//            }
-//        }
         currScore = 0
         binding.currScore.text = currScore.toString().plus("/20")
         binding.userAnswer.setOnEditorActionListener { v, actionId, event ->
