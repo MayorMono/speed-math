@@ -179,10 +179,9 @@ class QuestionFragment : Fragment() {
     private fun endGame() {
         gameTime = SystemClock.elapsedRealtime() - binding.chronometer.base
         binding.chronometer.stop()
-//        if (tts != null) {
-//            tts!!.stop()
-//            tts!!.shutdown()
-//        }
+        if (tts != null) {
+            tts!!.stop()
+        }
         findNavController().navigate(R.id.action_SecondFragment_to_ThirdFragment)
     }
 }
