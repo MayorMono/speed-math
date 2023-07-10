@@ -86,7 +86,9 @@ class QuestionFragment : Fragment() {
             binding.repeatQuestion.isVisible = true
 
             binding.repeatQuestion.setOnClickListener {
-                speakQuestion()
+                if (!tts!!.isSpeaking) {
+                    speakQuestion()
+                }
             }
         }
         showKeyboard()
