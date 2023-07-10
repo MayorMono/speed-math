@@ -133,4 +133,12 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         // Do nothing
     }
+
+    override fun onDestroy() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        super.onDestroy()
+    }
 }
