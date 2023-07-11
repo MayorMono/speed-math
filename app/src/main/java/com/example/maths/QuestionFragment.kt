@@ -3,18 +3,22 @@ package com.example.maths
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
-import android.view.KeyEvent
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.maths.MainActivity.Companion.currScore
 import com.example.maths.MainActivity.Companion.difficulty
+import com.example.maths.MainActivity.Companion.gameMode
 import com.example.maths.MainActivity.Companion.gameTime
+import com.example.maths.MainActivity.Companion.tts
 import com.example.maths.databinding.FragmentQuestionBinding
+import java.util.Locale
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -22,9 +26,15 @@ import com.example.maths.databinding.FragmentQuestionBinding
 class QuestionFragment : Fragment() {
 
     private var _binding: FragmentQuestionBinding? = null
-    private var currAnswer = 0
     private var startTime: Long = 0
     private var endTime: Long = 0
+
+    companion object {
+        private var first = 0
+        private var second = 0
+        private var operation: String = "+"
+        private var currAnswer = 0
+    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -43,13 +53,6 @@ class QuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonSecond.setOnClickListener {
-            try {
-                submitAnswer(view)
-            } catch (e: NumberFormatException) {
-                endGame()
-            }
-        }
         currScore = 0
         binding.currScore.text = currScore.toString().plus("/20")
         binding.userAnswer.setOnEditorActionListener { v, actionId, event ->
@@ -64,7 +67,23 @@ class QuestionFragment : Fragment() {
                 false
             }
         }
+        if (gameMode == 0) {
+            binding.firstNumber.isVisible = true
+            binding.secondNumber.isVisible = true
+            binding.operation.isVisible = true
+            binding.repeatQuestion.isVisible = false
+        } else {
+            binding.firstNumber.isVisible = false
+            binding.secondNumber.isVisible = false
+            binding.operation.isVisible = false
+            binding.repeatQuestion.isVisible = true
 
+            binding.repeatQuestion.setOnClickListener {
+                if (!tts!!.isSpeaking) {
+                    speakQuestion()
+                }
+            }
+        }
         showKeyboard()
         createQuestion(view)
         binding.chronometer.start()
@@ -83,18 +102,25 @@ class QuestionFragment : Fragment() {
     }
 
     private fun createQuestion(view: View) {
-        val operation = (0 until 2).random()
-        if (operation == 0) {
+        val operationId = (0 until 2).random()
+        if (operationId == 0) {
             giveAddition(view)
         } else {
             giveMultiplication(view)
         }
+        binding.firstNumber.text = first.toString()
+        binding.secondNumber.text = second.toString()
+        binding.operation.text = operation
+
+        if (gameMode == 1) {
+            speakQuestion()
+            binding.firstNumber.text = ""
+            binding.secondNumber.text = ""
+            binding.operation.text = ""
+        }
     }
 
     private fun giveAddition(view: View) {
-        var first = 0
-        var second = 0
-
         if (difficulty == 0) {
             first = (0 until 100).random()
             second = (0 until 100).random()
@@ -102,17 +128,11 @@ class QuestionFragment : Fragment() {
             first = (0 until 1000).random()
             second = (0 until 1000).random()
         }
-
         currAnswer = first + second
-        binding.firstNumber.text = first.toString()
-        binding.secondNumber.text = second.toString()
-        binding.operation.text = "+"
+        operation = "+"
     }
 
     private fun giveMultiplication(view: View) {
-        var first = 0
-        var second = 0
-
         if (difficulty == 0) {
             first = (0 until 10).random()
             second = (0 until 10).random()
@@ -120,11 +140,17 @@ class QuestionFragment : Fragment() {
             first = (0 until 13).random()
             second = (0 until 13).random()
         }
-
         currAnswer = first * second
-        binding.firstNumber.text = first.toString()
-        binding.secondNumber.text = second.toString()
-        binding.operation.text = "×"
+        operation = "x"
+    }
+
+    private fun speakQuestion() {
+        var ttsOperator = if (operation == "x") {
+            "times"
+        } else {
+            "plus"
+        }
+        tts!!.speak("$first $ttsOperator $second", TextToSpeech.QUEUE_ADD, null)
     }
 
     private fun submitAnswer(view: View) {
@@ -146,6 +172,9 @@ class QuestionFragment : Fragment() {
     private fun endGame() {
         gameTime = SystemClock.elapsedRealtime() - binding.chronometer.base
         binding.chronometer.stop()
+        if (tts != null) {
+            tts!!.stop()
+        }
         findNavController().navigate(R.id.action_SecondFragment_to_ThirdFragment)
     }
 }

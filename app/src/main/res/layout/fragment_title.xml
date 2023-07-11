@@ -54,20 +54,20 @@
 
     <RadioGroup
         android:id="@+id/difficulty"
-        android:layout_width="138dp"
+        android:layout_width="124dp"
         android:layout_height="112dp"
         android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toTopOf="@+id/button_start"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.589"
+        app:layout_constraintHorizontal_bias="0.802"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/high_score"
         app:layout_constraintVertical_bias="1.0">
 
         <RadioButton
             android:id="@+id/easy"
-            android:layout_width="104dp"
-            android:layout_height="60dp"
+            android:layout_width="103dp"
+            android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:enabled="true"
             android:onClick="setDifficulty"
@@ -77,8 +77,8 @@
 
         <RadioButton
             android:id="@+id/hard"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
+            android:layout_width="103dp"
+            android:layout_height="64dp"
             android:enabled="true"
             android:onClick="setDifficulty"
             android:text="@string/hard"
@@ -87,15 +87,42 @@
 
     </RadioGroup>
 
+    <RadioGroup
+        android:enabled='false'
+        android:id="@+id/game_mode"
+        android:layout_width="113dp"
+        android:layout_height="112dp"
+        android:layout_marginBottom="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_start"
+        app:layout_constraintEnd_toStartOf="@+id/difficulty"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/high_score"
+        app:layout_constraintVertical_bias="1.0">
+
+        <RadioButton
+            android:id="@+id/text_mode"
+            android:layout_width="92dp"
+            android:layout_height="wrap_content"
+            android:onClick="setGameMode"
+            android:text="@string/text_mode" />
+        <RadioButton
+            android:id="@+id/audio_mode"
+            android:layout_width="92dp"
+            android:layout_height="65dp"
+            android:onClick="setGameMode"
+            android:text="@string/audio_mode" />
+    </RadioGroup>
+
     <TextView
         android:id="@+id/credits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="404dp"
-        android:text="MayorMono"
+        android:layout_marginTop="36dp"
+        android:text="@string/author"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_text" />
+        app:layout_constraintTop_toBottomOf="@+id/button_start" />
 
     <TextView
         android:id="@+id/version"
@@ -107,6 +134,7 @@
         android:text="@string/version"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
