@@ -1,0 +1,66 @@
+package com.example.maths
+
+import android.app.Application
+import android.speech.tts.TextToSpeech
+import androidx.room.Room
+import java.io.FileNotFoundException
+
+class SpeedMath: Application() {
+
+    companion object {
+        var bestTimeHard: Long = 0
+        var bestTimeHardString: String = ""
+        var bestTimeEasy: Long = 0
+        var bestTimeEasyString: String = ""
+        var currScore = 0
+        var difficulty = 0
+        var gameMode = 0
+        var gameTime: Long = 0
+
+        fun formatTime(ms: Long): String {
+            val minutes = ms / 1000 /60
+            val seconds = ms / 1000 % 60
+
+            // Calculate decimal part of seconds
+            val doubleMinutesRaw: Double = ms.toDouble() / 1000
+            val doubleMinutesString = doubleMinutesRaw.toString()
+            val decimalStringHard = doubleMinutesString.substring(doubleMinutesString.indexOf("."))
+
+            val stringMinutes = minutes.toString()
+
+            val stringSeconds = if (seconds < 10) {
+                "0".plus(seconds.toString())
+            } else {
+                seconds.toString()
+            }
+            return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
+        }
+
+        var tts: TextToSpeech? = null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        var instance = this
+
+        try {
+            loadHighScore()
+        } catch (e: FileNotFoundException) {
+            // File not found
+        }
+    }
+
+    private fun loadHighScore() {
+        val score: List<String>? =
+            this.openFileInput("highScore")?.bufferedReader()?.useLines {
+                it.toList()
+            }
+        bestTimeHard = score?.get(0)?.toLong()!!
+        bestTimeEasy = score?.get(1)?.toLong()!!
+
+        bestTimeHardString = formatTime(bestTimeHard)
+        bestTimeEasyString = formatTime(bestTimeEasy)
+    }
+
+
+}

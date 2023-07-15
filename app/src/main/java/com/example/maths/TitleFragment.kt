@@ -8,14 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.navigation.fragment.findNavController
-import com.example.maths.MainActivity.Companion.bestTimeEasy
-import com.example.maths.MainActivity.Companion.bestTimeEasyString
-import com.example.maths.MainActivity.Companion.bestTimeHard
-import com.example.maths.MainActivity.Companion.bestTimeHardString
-import com.example.maths.MainActivity.Companion.difficulty
-import com.example.maths.MainActivity.Companion.formatTime
-import com.example.maths.MainActivity.Companion.gameMode
-import com.example.maths.MainActivity.Companion.tts
+import com.example.maths.SpeedMath.Companion.bestTimeEasy
+import com.example.maths.SpeedMath.Companion.bestTimeEasyString
+import com.example.maths.SpeedMath.Companion.bestTimeHard
+import com.example.maths.SpeedMath.Companion.bestTimeHardString
+import com.example.maths.SpeedMath.Companion.difficulty
+import com.example.maths.SpeedMath.Companion.formatTime
+import com.example.maths.SpeedMath.Companion.gameMode
+import com.example.maths.SpeedMath.Companion.tts
 import com.example.maths.databinding.FragmentTitleBinding
 import java.io.FileNotFoundException
 import java.util.Locale
@@ -43,12 +43,6 @@ class TitleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        try {
-            loadHighScore()
-        } catch (e: FileNotFoundException) {
-            // File not found
-        }
 
         if (difficulty == 0) {
             binding.easy.isChecked = true
@@ -83,17 +77,5 @@ class TitleFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun loadHighScore() {
-        val score: List<String>? =
-            context?.openFileInput("highScore")?.bufferedReader()?.useLines {
-            it.toList()
-        }
-        bestTimeHard = score?.get(0)?.toLong()!!
-        bestTimeEasy = score?.get(1)?.toLong()!!
-
-        bestTimeHardString = formatTime(bestTimeHard)
-        bestTimeEasyString = formatTime(bestTimeEasy)
     }
 }
