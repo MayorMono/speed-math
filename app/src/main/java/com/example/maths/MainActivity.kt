@@ -15,6 +15,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
 import com.example.maths.SpeedMath.Companion.bestTimeEasy
 import com.example.maths.SpeedMath.Companion.bestTimeEasyString
 import com.example.maths.SpeedMath.Companion.bestTimeHard
@@ -75,14 +79,24 @@ class MainActivity : AppCompatActivity() {
                 R.id.easy ->
                     if (checked) {
                         difficulty = 0
-                        scoreText.text = bestTimeEasyString
-                        scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
+                        if (gameMode == 0) {
+                            scoreText.text = bestTimeEasyString
+                            scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestAudioTimeEasyString
+                            scoreText.isInvisible = bestAudioTimeEasy.compareTo(0) == 0
+                        }
                     }
                 R.id.hard ->
                     if (checked) {
                         difficulty = 1
-                        scoreText.text = bestTimeHardString
-                        scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                        if (gameMode == 0) {
+                            scoreText.text = bestTimeHardString
+                            scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestAudioTimeHardString
+                            scoreText.isInvisible = bestAudioTimeHard.compareTo(0) == 0
+                        }
                     }
             }
         }
@@ -91,14 +105,29 @@ class MainActivity : AppCompatActivity() {
     fun setGameMode(view: View) {
         if (view is RadioButton) {
             val checked = view.isChecked
+            val scoreText: TextView = findViewById(R.id.high_score)
             when (view.getId()) {
                 R.id.text_mode ->
                     if (checked) {
                         gameMode = 0
+                        if (difficulty == 0) {
+                            scoreText.text = bestTimeEasyString
+                            scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestTimeHardString
+                            scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                        }
                     }
                 R.id.audio_mode ->
                     if (checked) {
                         gameMode = 1
+                        if (difficulty == 0) {
+                            scoreText.text = bestAudioTimeEasyString
+                            scoreText.isInvisible = bestAudioTimeEasy.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestAudioTimeHardString
+                            scoreText.isInvisible = bestAudioTimeHard.compareTo(0) == 0
+                        }
                     }
             }
         }

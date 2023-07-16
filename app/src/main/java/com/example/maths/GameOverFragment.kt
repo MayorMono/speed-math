@@ -7,6 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
 import com.example.maths.SpeedMath.Companion.bestTimeEasy
 import com.example.maths.SpeedMath.Companion.bestTimeEasyString
 import com.example.maths.SpeedMath.Companion.bestTimeHard
@@ -16,6 +20,8 @@ import com.example.maths.SpeedMath.Companion.currScore
 import com.example.maths.SpeedMath.Companion.gameTime
 import com.example.maths.SpeedMath.Companion.formatTime
 import com.example.maths.SpeedMath.Companion.difficulty
+import com.example.maths.SpeedMath.Companion.db
+import com.example.maths.SpeedMath.Companion.gameMode
 
 class GameOverFragment: Fragment() {
     private var _binding: FragmentGameOverBinding? = null
@@ -35,18 +41,37 @@ class GameOverFragment: Fragment() {
             binding.scoreText.isInvisible = false
             binding.highScore.isInvisible = false
 
-            saveTimes()
-
+//            saveTimes()
             val gameTimeFormatted = formatTime(gameTime)
+
+            if (gameMode == 0) {
+                if (difficulty == 1 && (gameTime < bestTimeHard || bestTimeHard.compareTo(0) == 0)) {
+                    bestTimeHard = gameTime
+                    bestTimeHardString = gameTimeFormatted
+                    saveTimes()
+                } else if (difficulty == 0 && (gameTime < bestTimeEasy || bestTimeEasy.compareTo(0) == 0)) {
+                    bestTimeEasy = gameTime
+                    bestTimeEasyString = gameTimeFormatted
+                    saveTimes()
+                }
+            } else {
+                if (difficulty == 1 && (gameTime < bestAudioTimeHard || bestAudioTimeHard.compareTo(0) == 0)) {
+                    bestAudioTimeHard = gameTime
+                    bestAudioTimeHardString = gameTimeFormatted
+                    saveTimes()
+                } else if (difficulty == 0 && (gameTime < bestAudioTimeEasy || bestAudioTimeEasy.compareTo(0) == 0)) {
+                    bestAudioTimeEasy = gameTime
+                    bestAudioTimeEasyString = gameTimeFormatted
+                    saveTimes()
+                }
+            }
 
             binding.highScore.text = gameTimeFormatted
 
-            if (SpeedMath.difficulty == 0) {
+            if (difficulty == 0) {
                 binding.titleText.text = getString(R.string.easy_complete)
-                bestTimeEasyString = gameTimeFormatted
             } else {
                 binding.titleText.text = getString(R.string.hard_complete)
-                bestTimeHardString = gameTimeFormatted
             }
 
         } else {
@@ -57,16 +82,10 @@ class GameOverFragment: Fragment() {
     }
 
     private fun saveTimes() {
-        if (difficulty == 1 && (gameTime < bestTimeHard || bestTimeHard.compareTo(0) == 0)) {
-            bestTimeHard = gameTime
-        } else if (difficulty == 0 && (gameTime < bestTimeEasy || bestTimeEasy.compareTo(0) == 0)) {
-            bestTimeEasy = gameTime
-        }
-        val filename = "highScore"
-        val fileContents = bestTimeHard.toString() + "\n" + bestTimeEasy.toString()
-        context?.openFileOutput(filename, 0).use {
-            it?.write(fileContents.toByteArray())
-        }
+        val recordDao = db!!.recordDao()
+        val prevFastest = recordDao.getFastestTime(difficulty, gameMode)
+        recordDao.deleteRecord(prevFastest)
+        recordDao.upsertRecord(Record(gameTime, System.currentTimeMillis(), difficulty, gameMode))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -8,6 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.navigation.fragment.findNavController
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
 import com.example.maths.SpeedMath.Companion.bestTimeEasy
 import com.example.maths.SpeedMath.Companion.bestTimeEasyString
 import com.example.maths.SpeedMath.Companion.bestTimeHard
@@ -44,20 +48,28 @@ class TitleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (difficulty == 0) {
-            binding.easy.isChecked = true
-            binding.highScore.text = bestTimeEasyString
-            binding.highScore.isInvisible = bestTimeEasy.compareTo(0) == 0
-        } else {
-            binding.hard.isChecked = true
-            binding.highScore.text = bestTimeHardString
-            binding.highScore.isInvisible = bestTimeHard.compareTo(0) == 0
-        }
-
         if (gameMode == 0) {
             binding.textMode.isChecked = true
+            if (difficulty == 0) {
+                binding.easy.isChecked = true
+                binding.highScore.text = bestTimeEasyString
+                binding.highScore.isInvisible = bestTimeEasy.compareTo(0) == 0
+            } else {
+                binding.hard.isChecked = true
+                binding.highScore.text = bestTimeHardString
+                binding.highScore.isInvisible = bestTimeHard.compareTo(0) == 0
+            }
         } else {
             binding.audioMode.isChecked = true
+            if (difficulty == 0) {
+                binding.easy.isChecked = true
+                binding.highScore.text = bestAudioTimeEasyString
+                binding.highScore.isInvisible = bestAudioTimeEasy.compareTo(0) == 0
+            } else {
+                binding.hard.isChecked = true
+                binding.highScore.text = bestAudioTimeHardString
+                binding.highScore.isInvisible = bestAudioTimeHard.compareTo(0) == 0
+            }
         }
 
         binding.buttonStart.setOnClickListener {

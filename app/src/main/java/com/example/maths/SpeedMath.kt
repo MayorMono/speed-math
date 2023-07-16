@@ -12,6 +12,10 @@ class SpeedMath: Application() {
         var bestTimeHardString: String = ""
         var bestTimeEasy: Long = 0
         var bestTimeEasyString: String = ""
+        var bestAudioTimeHard: Long = 0
+        var bestAudioTimeEasy: Long = 0
+        var bestAudioTimeHardString: String = ""
+        var bestAudioTimeEasyString: String = ""
         var currScore = 0
         var difficulty = 0
         var gameMode = 0
@@ -37,11 +41,17 @@ class SpeedMath: Application() {
         }
 
         var tts: TextToSpeech? = null
+        var db: AppDatabase? = null
     }
 
     override fun onCreate() {
         super.onCreate()
         var instance = this
+
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "sm-database"
+        ).allowMainThreadQueries().build()
 
         try {
             loadHighScore()
@@ -51,15 +61,27 @@ class SpeedMath: Application() {
     }
 
     private fun loadHighScore() {
-        val score: List<String>? =
-            this.openFileInput("highScore")?.bufferedReader()?.useLines {
-                it.toList()
+        val recordDao = db!!.recordDao()
+        val scores = recordDao.getAllFastestTimes()
+        for (score in scores) {
+            if (score.gameMode == 0) {
+                if (score.difficulty == 0) {
+                    bestTimeEasy = score.gameTime
+                } else {
+                    bestTimeHard = score.gameTime
+                }
+            } else {
+                if (score.difficulty == 0) {
+                    bestAudioTimeEasy = score.gameTime
+                } else{
+                    bestAudioTimeHard = score.gameTime
+                }
             }
-        bestTimeHard = score?.get(0)?.toLong()!!
-        bestTimeEasy = score?.get(1)?.toLong()!!
-
-        bestTimeHardString = formatTime(bestTimeHard)
-        bestTimeEasyString = formatTime(bestTimeEasy)
+            bestTimeHardString = formatTime(bestTimeHard)
+            bestTimeEasyString = formatTime(bestTimeEasy)
+            bestAudioTimeEasyString = formatTime(bestAudioTimeEasy)
+            bestAudioTimeHardString = formatTime(bestAudioTimeHard)
+        }
     }
 
 
