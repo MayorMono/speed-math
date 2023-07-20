@@ -15,44 +15,22 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
+import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
+import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
+import com.example.maths.SpeedMath.Companion.bestTimeEasy
+import com.example.maths.SpeedMath.Companion.bestTimeEasyString
+import com.example.maths.SpeedMath.Companion.bestTimeHard
+import com.example.maths.SpeedMath.Companion.bestTimeHardString
+import com.example.maths.SpeedMath.Companion.difficulty
+import com.example.maths.SpeedMath.Companion.gameMode
 import com.example.maths.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
-    companion object {
-        var bestTimeHard: Long = 0
-        var bestTimeHardString: String = ""
-        var bestTimeEasy: Long = 0
-        var bestTimeEasyString: String = ""
-        var currScore = 0
-        var difficulty = 0
-        var gameMode = 0
-        var gameTime: Long = 0
-
-        fun formatTime(ms: Long): String {
-            val minutes = ms / 1000 /60
-            val seconds = ms / 1000 % 60
-
-            // Calculate decimal part of seconds
-            val doubleMinutesRaw: Double = ms.toDouble() / 1000
-            val doubleMinutesString = doubleMinutesRaw.toString()
-            val decimalStringHard = doubleMinutesString.substring(doubleMinutesString.indexOf("."))
-
-            val stringMinutes = minutes.toString()
-
-            val stringSeconds = if (seconds < 10) {
-                "0".plus(seconds.toString())
-            } else {
-                seconds.toString()
-            }
-            return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
-        }
-
-        var tts: TextToSpeech? = null
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,14 +79,24 @@ class MainActivity : AppCompatActivity() {
                 R.id.easy ->
                     if (checked) {
                         difficulty = 0
-                        scoreText.text = bestTimeEasyString
-                        scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
+                        if (gameMode == 0) {
+                            scoreText.text = bestTimeEasyString
+                            scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestAudioTimeEasyString
+                            scoreText.isInvisible = bestAudioTimeEasy.compareTo(0) == 0
+                        }
                     }
                 R.id.hard ->
                     if (checked) {
                         difficulty = 1
-                        scoreText.text = bestTimeHardString
-                        scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                        if (gameMode == 0) {
+                            scoreText.text = bestTimeHardString
+                            scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestAudioTimeHardString
+                            scoreText.isInvisible = bestAudioTimeHard.compareTo(0) == 0
+                        }
                     }
             }
         }
@@ -117,14 +105,29 @@ class MainActivity : AppCompatActivity() {
     fun setGameMode(view: View) {
         if (view is RadioButton) {
             val checked = view.isChecked
+            val scoreText: TextView = findViewById(R.id.high_score)
             when (view.getId()) {
                 R.id.text_mode ->
                     if (checked) {
                         gameMode = 0
+                        if (difficulty == 0) {
+                            scoreText.text = bestTimeEasyString
+                            scoreText.isInvisible = bestTimeEasy.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestTimeHardString
+                            scoreText.isInvisible = bestTimeHard.compareTo(0) == 0
+                        }
                     }
                 R.id.audio_mode ->
                     if (checked) {
                         gameMode = 1
+                        if (difficulty == 0) {
+                            scoreText.text = bestAudioTimeEasyString
+                            scoreText.isInvisible = bestAudioTimeEasy.compareTo(0) == 0
+                        } else {
+                            scoreText.text = bestAudioTimeHardString
+                            scoreText.isInvisible = bestAudioTimeHard.compareTo(0) == 0
+                        }
                     }
             }
         }
@@ -134,11 +137,11 @@ class MainActivity : AppCompatActivity() {
         // Do nothing
     }
 
-    override fun onDestroy() {
-        if (tts != null) {
-            tts!!.stop()
-            tts!!.shutdown()
-        }
-        super.onDestroy()
-    }
+//    override fun onDestroy() {
+//        if (tts != null) {
+//            tts!!.stop()
+//            tts!!.shutdown()
+//        }
+//        super.onDestroy()
+//    }
 }
