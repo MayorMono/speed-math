@@ -7,7 +7,7 @@
     tools:context=".QuestionFragment">
 
     <TextView
-        android:id="@+id/first_number"
+        android:id="@+id/second_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="228dp"
@@ -30,13 +30,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/second_number"
+        android:id="@+id/first_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="132dp"
         android:text="0"
         android:textSize="50sp"
-        app:layout_constraintBottom_toTopOf="@+id/first_number"
+        app:layout_constraintBottom_toTopOf="@+id/second_number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

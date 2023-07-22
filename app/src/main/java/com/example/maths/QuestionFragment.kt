@@ -102,12 +102,13 @@ class QuestionFragment : Fragment() {
     }
 
     private fun createQuestion(view: View) {
-        val operationId = (0 until 2).random()
-        if (operationId == 0) {
-            giveAddition(view)
-        } else {
-            giveMultiplication(view)
+        when ((0 until 4).random()) {
+            0 -> giveAddition(view)
+            1 -> giveMultiplication(view)
+            2 -> giveSubtraction(view)
+            3 -> giveDivision(view)
         }
+
         binding.firstNumber.text = first.toString()
         binding.secondNumber.text = second.toString()
         binding.operation.text = operation
@@ -144,11 +145,44 @@ class QuestionFragment : Fragment() {
         operation = "x"
     }
 
+    private fun giveSubtraction(view: View) {
+        if (difficulty == 0) {
+            first = (0 until 199).random()
+            second = (0 until first + 1).random()
+        } else if (difficulty == 1) {
+            first = (0 until 1998).random()
+            second = (0 until first + 1).random()
+        }
+        currAnswer = first - second
+        operation = "-"
+    }
+
+    private fun giveDivision(view: View) {
+        if (difficulty == 0) {
+            second = (1 until 10).random()
+            currAnswer = (0 until 10).random()
+        } else if (difficulty == 1) {
+            second = (1 until 13).random()
+            currAnswer = (0 until 13).random()
+        }
+        first = currAnswer * second
+        operation = "÷"
+    }
+
     private fun speakQuestion() {
-        var ttsOperator = if (operation == "x") {
-            "times"
-        } else {
-            "plus"
+        val ttsOperator = when (operation) {
+            "x" -> {
+                "times"
+            }
+            "+" -> {
+                "plus"
+            }
+            "-" -> {
+                "minus"
+            }
+            else -> {
+                "divided by"
+            }
         }
         tts!!.speak("$first $ttsOperator $second", TextToSpeech.QUEUE_ADD, null)
     }
