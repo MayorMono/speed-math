@@ -22,6 +22,10 @@ import com.example.maths.SpeedMath.Companion.formatTime
 import com.example.maths.SpeedMath.Companion.difficulty
 import com.example.maths.SpeedMath.Companion.db
 import com.example.maths.SpeedMath.Companion.gameMode
+import com.example.maths.QuestionFragment.Companion.addTimes
+import com.example.maths.QuestionFragment.Companion.subTimes
+import com.example.maths.QuestionFragment.Companion.mulTimes
+import com.example.maths.QuestionFragment.Companion.divTimes
 
 class GameOverFragment: Fragment() {
     private var _binding: FragmentGameOverBinding? = null
@@ -83,9 +87,29 @@ class GameOverFragment: Fragment() {
 
     private fun saveTimes() {
         val recordDao = db!!.recordDao()
-        val prevFastest = recordDao.getFastestTime(difficulty, gameMode)
-        recordDao.deleteRecord(prevFastest)
-        recordDao.upsertRecord(Record(gameTime, System.currentTimeMillis(), difficulty, gameMode))
+
+//        val prevFastest = recordDao.getFastestTime(difficulty, gameMode)
+//        recordDao.deleteRecord(prevFastest)
+
+        val addSpeed: Double = calculateSpeed(addTimes)
+        val subSpeed: Double = calculateSpeed(subTimes)
+        val mulSpeed: Double = calculateSpeed(mulTimes)
+        val divSpeed: Double = calculateSpeed(divTimes)
+
+        recordDao.insertRecord(Record(gameTime, System.currentTimeMillis(), difficulty, gameMode, addSpeed, subSpeed, mulSpeed, divSpeed))
+    }
+
+    private fun calculateSpeed(times: ArrayList<Long>): Double {
+        if (times.size == 0) {
+            return 0.0
+        }
+
+        var sum: Double = 0.0
+        for (time: Long in times) {
+            sum += time.toDouble() / 1000
+        }
+
+        return times.size / sum
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
