@@ -1,5 +1,6 @@
 package com.example.maths
 
+import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import androidx.fragment.app.Fragment
@@ -74,6 +75,11 @@ class TitleFragment : Fragment() {
 
         binding.buttonStart.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+
+        binding.buttonStats.setOnClickListener {
+            val switchActivityIntent = Intent(context, StatsActivity::class.java)
+            startActivity(switchActivityIntent)
         }
 
         if (tts == null) {

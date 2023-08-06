@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TimeFragment">
+
+    <ListView
+        android:id="@+id/time_history"
+        android:layout_width="345dp"
+        android:layout_height="482dp"
+        android:layout_marginBottom="112dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/mode_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="76dp"
+        android:textOff="@string/text_mode"
+        android:textOn="@string/audio_mode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showText="true" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/difficulty_switch"
+        android:layout_width="66dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginLeft="44dp"
+        android:layout_marginTop="76dp"
+        android:textOff="@string/easy"
+        android:textOn="@string/hard"
+        app:layout_constraintStart_toEndOf="@+id/mode_switch"
+        app:layout_constraintTop_toTopOf="parent"
+        app:showText="true" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,4 +31,7 @@ interface RecordDao {
 
     @Query("SELECT * FROM record WHERE difficulty = :difficulty AND gameMode = :gameMode ORDER BY gameTime")
     fun getFastestTimeHistory(difficulty: Int, gameMode: Int): List<Record>
+
+//    @Query("SELECT gameTime FROM record WHERE difficulty = :difficulty AND gameMode = :gameMode ORDER BY gameTime")
+//    fun getFastestTimeHistory(difficulty: Int, gameMode: Int): List<Long>
 }
