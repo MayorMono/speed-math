@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.CompoundButton
 import android.widget.ListView
 import android.widget.TextView
@@ -45,19 +46,14 @@ class TimeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val lv: ListView = view.findViewById(R.id.time_history)
         val recordDao = SpeedMath.db!!.recordDao()
-
         val records = recordDao.getFastestTimeHistory(0, 0)
 
         timeAdapter = TimeAdapter(requireContext(), records)
-        lv.adapter = timeAdapter
 
-        val modeSwitch: SwitchCompat = view.findViewById(R.id.mode_switch)
-        modeSwitch.setOnCheckedChangeListener(onCheckedChanged())
-
-        val difficultySwitch: SwitchCompat = view.findViewById(R.id.difficulty_switch)
-        difficultySwitch.setOnCheckedChangeListener(onCheckedChanged())
+        binding.timeHistory.adapter = timeAdapter
+        binding.modeSwitch.setOnCheckedChangeListener(onCheckedChanged())
+        binding.difficultySwitch.setOnCheckedChangeListener(onCheckedChanged())
     }
 
     override fun onDestroyView() {
