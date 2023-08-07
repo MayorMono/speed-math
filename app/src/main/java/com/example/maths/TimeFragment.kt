@@ -12,6 +12,7 @@ import android.widget.CompoundButton
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
+import androidx.navigation.fragment.findNavController
 import com.example.maths.databinding.FragmentTimeBinding
 import com.example.maths.SpeedMath.Companion.formatTime
 import java.text.DateFormat
@@ -54,6 +55,10 @@ class TimeFragment : Fragment() {
         binding.timeHistory.adapter = timeAdapter
         binding.modeSwitch.setOnCheckedChangeListener(onCheckedChanged())
         binding.difficultySwitch.setOnCheckedChangeListener(onCheckedChanged())
+
+        binding.goToSpeed.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
     }
 
     override fun onDestroyView() {
