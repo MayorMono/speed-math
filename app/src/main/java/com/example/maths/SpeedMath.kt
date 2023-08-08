@@ -4,6 +4,9 @@ import android.app.Application
 import android.speech.tts.TextToSpeech
 import androidx.room.Room
 import java.io.FileNotFoundException
+import java.text.DateFormat
+import java.text.DateFormat.SHORT
+import java.util.Date
 
 class SpeedMath: Application() {
 
@@ -38,6 +41,12 @@ class SpeedMath: Application() {
                 seconds.toString()
             }
             return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
+        }
+
+        fun formatDate(ms: Long) : String {
+            val df: DateFormat = DateFormat.getDateTimeInstance(SHORT, SHORT)
+            val resultDate = Date(ms)
+            return df.format(resultDate)
         }
 
         var tts: TextToSpeech? = null

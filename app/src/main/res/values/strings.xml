@@ -2,7 +2,7 @@
     <string name="app_name">Maths</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">History of Fastest Times</string>
+    <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="third_fragment_label">Third Fragment</string>
     <string name="next">Next</string>
@@ -31,5 +31,8 @@
     <string name="audio_mode">Audio</string>
     <string name="title_activity_stats">StatsActivity</string>
     <string name="speed">Speed</string>
+    <string name="history_of_fastest_times">History of Fastest Times</string>
+    <string name="speed_statistics">Speed Statistics</string>
+    <string name="title_button">Title</string>
 
 </resources>

@@ -13,6 +13,7 @@
             android:name=".StatsActivity"
             android:exported="false"
             android:label="@string/title_activity_stats"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.Maths" />
         <activity
             android:name=".MainActivity"

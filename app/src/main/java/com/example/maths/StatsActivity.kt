@@ -22,6 +22,8 @@ class StatsActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_stats)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        supportActionBar?.hide()
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -1,22 +1,19 @@
 package com.example.maths
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.Button
 import android.widget.CompoundButton
-import android.widget.ListView
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.maths.databinding.FragmentTimeBinding
+import com.example.maths.SpeedMath.Companion.formatDate
 import com.example.maths.SpeedMath.Companion.formatTime
-import java.text.DateFormat
-import java.util.Date
+import com.example.maths.databinding.FragmentTimeBinding
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -58,6 +55,12 @@ class TimeFragment : Fragment() {
 
         binding.goToSpeed.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        }
+
+        binding.goToTitle.setOnClickListener {
+            val switchActivityIntent = Intent(context, MainActivity::class.java)
+            startActivity(switchActivityIntent)
+            activity?.finish()
         }
     }
 
@@ -121,12 +124,6 @@ class TimeAdapter(private val context: Context, private val data: List<Record>):
         dateTime!!.text = formatDate(entry.dateTime)
 
         return cv
-    }
-
-    private fun formatDate(ms: Long) : String {
-        val df: DateFormat = DateFormat.getDateInstance()
-        val resultDate = Date(ms)
-        return df.format(resultDate)
     }
 
     fun updateData(newRecords: List<Record>) {

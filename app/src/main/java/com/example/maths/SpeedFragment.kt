@@ -1,21 +1,29 @@
 package com.example.maths
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.maths.SpeedMath.Companion.formatDate
 import com.example.maths.databinding.FragmentSpeedBinding
+import com.jjoe64.graphview.DefaultLabelFormatter
+import com.jjoe64.graphview.LegendRenderer
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import java.util.ArrayList
 import java.util.Date
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SpeedFragment : Fragment() {
+
+    private var gameMode = 0
+    private var difficulty = 0
 
     private var _binding: FragmentSpeedBinding? = null
 
@@ -36,39 +44,46 @@ class SpeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.buttonSecond.setOnClickListener {
-//            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
-//        }
-//        val test: ArrayList<DataPoint> = arrayListOf(
-//            DataPoint(0.0, 1.0),
-//            DataPoint(1.0, 5.0),
-//            DataPoint(2.0, 3.0),
-//            DataPoint(3.0, 2.0),
-//            DataPoint(4.0, 6.0)
-//        )
-//
-//        val test2: ArrayList<DataPoint> = arrayListOf(
-//            DataPoint(0.0, 2.0),
-//            DataPoint(1.0, 6.0),
-//            DataPoint(2.0, 7.0),
-//            DataPoint(3.0, 9.0),
-//            DataPoint(8.0, 15.0)
-//        )
-//
-//        val series1 = LineGraphSeries(test.toTypedArray())
-//        val series2 = LineGraphSeries(test2.toTypedArray())
-//
-//        series1.title = "Series 1"
-//        series2.title = "Series 2"
-//
-//        series1.color = Color.RED
-//        series2.color = Color.BLUE
-//
-//        binding.speedGraph.addSeries(series1)
-//        binding.speedGraph.addSeries(series2)
+        binding.modeSwitch.setOnCheckedChangeListener(onCheckedChanged())
+        binding.difficultySwitch.setOnCheckedChangeListener(onCheckedChanged())
 
+        binding.speedGraph.gridLabelRenderer.labelFormatter = object : DefaultLabelFormatter() {
+            override fun formatLabel(value: Double, isValueX: Boolean): String {
+                if (isValueX) {
+                    return formatDate(value.toLong())
+                }
+                return super.formatLabel(value, isValueX)
+            }
+        }
+
+        constructGraph(0, 0)
+
+        binding.speedGraph.legendRenderer.isVisible = true
+        binding.speedGraph.legendRenderer.align = LegendRenderer.LegendAlign.TOP
+
+//        binding.speedGraph.viewport.isScalable = true
+//        binding.speedGraph.viewport.isScrollable = true
+        binding.speedGraph.gridLabelRenderer.setHorizontalLabelsAngle(90)
+
+        binding.goToTime.setOnClickListener {
+            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+        }
+
+        binding.goToTitle.setOnClickListener {
+            val switchActivityIntent = Intent(context, MainActivity::class.java)
+            startActivity(switchActivityIntent)
+            activity?.finish()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun constructGraph(difficulty: Int, gameMode: Int) {
         val recordDao = SpeedMath.db!!.recordDao()
-        val seriesList = createSeries(recordDao.getFastestTimeHistory(0, 0))
+        val seriesList = createSeries(recordDao.getFastestTimeHistory(difficulty, gameMode))
 
         seriesList[0].title = "Addition"
         seriesList[0].color = Color.RED
@@ -85,13 +100,6 @@ class SpeedFragment : Fragment() {
         for (series: LineGraphSeries<DataPoint> in seriesList) {
             binding.speedGraph.addSeries(series)
         }
-
-        binding.speedGraph.legendRenderer.isVisible = true
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun createSeries(records: List<Record>): ArrayList<LineGraphSeries<DataPoint>> {
@@ -120,5 +128,29 @@ class SpeedFragment : Fragment() {
         seriesList.add(divSeries)
 
         return seriesList
+    }
+
+    private fun onCheckedChanged(): CompoundButton.OnCheckedChangeListener {
+        return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            when (buttonView.id) {
+                R.id.mode_switch -> {
+                    gameMode = if (isChecked) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                R.id.difficulty_switch -> {
+                    difficulty = if (isChecked) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+            }
+
+            binding.speedGraph.removeAllSeries()
+            constructGraph(difficulty, gameMode)
+        }
     }
 }
