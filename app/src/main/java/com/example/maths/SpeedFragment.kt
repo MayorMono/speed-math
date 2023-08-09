@@ -11,19 +11,16 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.maths.SpeedMath.Companion.formatDate
 import com.example.maths.databinding.FragmentSpeedBinding
-import com.jjoe64.graphview.DefaultLabelFormatter
-import com.jjoe64.graphview.LegendRenderer
-import com.jjoe64.graphview.series.DataPoint
-import com.jjoe64.graphview.series.LineGraphSeries
-import java.util.Date
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SpeedFragment : Fragment() {
-
-    private var gameMode = 0
-    private var difficulty = 0
 
     private var _binding: FragmentSpeedBinding? = null
 
@@ -38,7 +35,6 @@ class SpeedFragment : Fragment() {
 
         _binding = FragmentSpeedBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,23 +43,7 @@ class SpeedFragment : Fragment() {
         binding.modeSwitch.setOnCheckedChangeListener(onCheckedChanged())
         binding.difficultySwitch.setOnCheckedChangeListener(onCheckedChanged())
 
-        binding.speedGraph.gridLabelRenderer.labelFormatter = object : DefaultLabelFormatter() {
-            override fun formatLabel(value: Double, isValueX: Boolean): String {
-                if (isValueX) {
-                    return formatDate(value.toLong())
-                }
-                return super.formatLabel(value, isValueX)
-            }
-        }
-
-        constructGraph(0, 0)
-
-        binding.speedGraph.legendRenderer.isVisible = true
-        binding.speedGraph.legendRenderer.align = LegendRenderer.LegendAlign.TOP
-
-//        binding.speedGraph.viewport.isScalable = true
-//        binding.speedGraph.viewport.isScrollable = true
-        binding.speedGraph.gridLabelRenderer.setHorizontalLabelsAngle(90)
+        constructGraph(0,0)
 
         binding.goToTime.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
@@ -83,58 +63,75 @@ class SpeedFragment : Fragment() {
 
     private fun constructGraph(difficulty: Int, gameMode: Int) {
         val recordDao = SpeedMath.db!!.recordDao()
-        val seriesList = createSeries(recordDao.getFastestTimeHistory(difficulty, gameMode))
+        val records = recordDao.getFastestTimeHistory(difficulty, gameMode)
+        val datasets = createLineDatasets(records)
 
-        seriesList[0].title = "Addition"
-        seriesList[0].color = Color.RED
+        val data = LineData(datasets)
+        binding.speedGraph.data = data
+        binding.speedGraph.xAxis.valueFormatter = XAxisDateFormatter()
+        binding.speedGraph.xAxis.labelRotationAngle = -45f
 
-        seriesList[1].title = "Subtraction"
-        seriesList[1].color = Color.GREEN
+        val grey = Color.rgb(128, 128, 128)
+        binding.speedGraph.axisLeft.textColor = grey
+        binding.speedGraph.axisRight.textColor = grey
+        binding.speedGraph.xAxis.textColor = grey
+        binding.speedGraph.legend.textColor = grey
+        binding.speedGraph.description.textColor = grey
 
-        seriesList[2].title = "Multiplication"
-        seriesList[2].color = Color.BLUE
-
-        seriesList[3].title = "Division"
-        seriesList[3].color = Color.MAGENTA
-
-        for (series: LineGraphSeries<DataPoint> in seriesList) {
-            binding.speedGraph.addSeries(series)
-        }
+        binding.speedGraph.description.text = "Questions Per Second"
     }
 
-    private fun createSeries(records: List<Record>): ArrayList<LineGraphSeries<DataPoint>> {
-        var seriesList: ArrayList<LineGraphSeries<DataPoint>> = arrayListOf()
+    private fun createLineDatasets(records: List<Record>): ArrayList<ILineDataSet> {
+        val sets: ArrayList<ILineDataSet> = arrayListOf()
 
-        val addSpeeds: ArrayList<DataPoint> = arrayListOf()
-        val subSpeeds: ArrayList<DataPoint> = arrayListOf()
-        val mulSpeeds: ArrayList<DataPoint> = arrayListOf()
-        val divSpeeds: ArrayList<DataPoint> = arrayListOf()
+        val addSpeeds: ArrayList<Entry> = arrayListOf()
+        val subSpeeds: ArrayList<Entry> = arrayListOf()
+        val mulSpeeds: ArrayList<Entry> = arrayListOf()
+        val divSpeeds: ArrayList<Entry> = arrayListOf()
 
         for (i in records.lastIndex downTo 0) {
-            addSpeeds.add(DataPoint(Date(records[i].dateTime), records[i].addSpeed))
-            subSpeeds.add(DataPoint(Date(records[i].dateTime), records[i].subSpeed))
-            mulSpeeds.add(DataPoint(Date(records[i].dateTime), records[i].mulSpeed))
-            divSpeeds.add(DataPoint(Date(records[i].dateTime), records[i].divSpeed))
+            val dateTime = records[i].dateTime.toFloat()
+
+            addSpeeds.add(Entry(dateTime, records[i].addSpeed.toFloat()))
+            subSpeeds.add(Entry(dateTime, records[i].subSpeed.toFloat()))
+            mulSpeeds.add(Entry(dateTime, records[i].mulSpeed.toFloat()))
+            divSpeeds.add(Entry(dateTime, records[i].divSpeed.toFloat()))
         }
 
-        val addSeries = LineGraphSeries(addSpeeds.toTypedArray())
-        val subSeries = LineGraphSeries(subSpeeds.toTypedArray())
-        val mulSeries = LineGraphSeries(mulSpeeds.toTypedArray())
-        val divSeries = LineGraphSeries(divSpeeds.toTypedArray())
+        val lineWidth = 3f
 
-        seriesList.add(addSeries)
-        seriesList.add(subSeries)
-        seriesList.add(mulSeries)
-        seriesList.add(divSeries)
+        val addSet = LineDataSet(addSpeeds, "Addition")
+        addSet.color = Color.RED
+        addSet.lineWidth = lineWidth
 
-        return seriesList
+        val subSet = LineDataSet(subSpeeds, "Subtraction")
+        subSet.color = Color.GREEN
+        subSet.lineWidth = lineWidth
+
+        val mulSet = LineDataSet(mulSpeeds, "Multiplication")
+        mulSet.color = Color.BLUE
+        mulSet.lineWidth = lineWidth
+
+        val divSet = LineDataSet(divSpeeds, "Subtraction")
+        divSet.color = Color.MAGENTA
+        divSet.lineWidth = lineWidth
+
+        sets.add(addSet)
+        sets.add(subSet)
+        sets.add(mulSet)
+        sets.add(divSet)
+
+        return sets
     }
 
     private fun onCheckedChanged(): CompoundButton.OnCheckedChangeListener {
         return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            var gameMode = 0
+            var difficulty = 0
+
             when (buttonView.id) {
                 R.id.mode_switch -> {
-                    gameMode = if (isChecked) {
+                     gameMode = if (isChecked) {
                         1
                     } else {
                         0
@@ -149,8 +146,17 @@ class SpeedFragment : Fragment() {
                 }
             }
 
-            binding.speedGraph.removeAllSeries()
+            binding.speedGraph.invalidate()
+            binding.speedGraph.clear()
             constructGraph(difficulty, gameMode)
         }
+    }
+}
+
+class XAxisDateFormatter: IndexAxisValueFormatter() {
+    @Override
+    override fun getFormattedValue(value: Float): String {
+        val ms = value.toLong()
+        return formatDate(ms)
     }
 }
