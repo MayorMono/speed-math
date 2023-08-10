@@ -67,6 +67,9 @@ class SpeedFragment : Fragment() {
         val datasets = createLineDatasets(recentGames)
 
         val data = LineData(datasets)
+
+        data.setDrawValues(false)
+
         binding.speedGraph.data = data
         binding.speedGraph.xAxis.valueFormatter = XAxisDateFormatter()
         binding.speedGraph.xAxis.labelRotationAngle = -45f
