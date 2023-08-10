@@ -12,13 +12,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.maths.SpeedMath.Companion.currScore
-import com.example.maths.SpeedMath.Companion.difficulty
-import com.example.maths.SpeedMath.Companion.gameMode
-import com.example.maths.SpeedMath.Companion.gameTime
+import com.example.maths.MainActivity.Companion.currScore
+import com.example.maths.MainActivity.Companion.difficulty
+import com.example.maths.MainActivity.Companion.gameMode
+import com.example.maths.MainActivity.Companion.gameTime
 import com.example.maths.SpeedMath.Companion.tts
 import com.example.maths.databinding.FragmentQuestionBinding
-import java.util.Locale
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.

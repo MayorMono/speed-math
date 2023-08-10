@@ -7,25 +7,17 @@ import android.view.ViewGroup
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
-import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
-import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
-import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
-import com.example.maths.SpeedMath.Companion.bestTimeEasy
-import com.example.maths.SpeedMath.Companion.bestTimeEasyString
-import com.example.maths.SpeedMath.Companion.bestTimeHard
-import com.example.maths.SpeedMath.Companion.bestTimeHardString
-import com.example.maths.databinding.FragmentGameOverBinding
-import com.example.maths.SpeedMath.Companion.currScore
-import com.example.maths.SpeedMath.Companion.gameTime
-import com.example.maths.SpeedMath.Companion.formatTime
-import com.example.maths.SpeedMath.Companion.difficulty
-import com.example.maths.SpeedMath.Companion.db
-import com.example.maths.SpeedMath.Companion.gameMode
 import com.example.maths.QuestionFragment.Companion.addTimes
-import com.example.maths.QuestionFragment.Companion.subTimes
-import com.example.maths.QuestionFragment.Companion.mulTimes
 import com.example.maths.QuestionFragment.Companion.divTimes
+import com.example.maths.QuestionFragment.Companion.mulTimes
+import com.example.maths.QuestionFragment.Companion.subTimes
+import com.example.maths.MainActivity.Companion.currScore
+import com.example.maths.SpeedMath.Companion.db
+import com.example.maths.MainActivity.Companion.difficulty
+import com.example.maths.SpeedMath.Companion.formatTime
+import com.example.maths.MainActivity.Companion.gameMode
+import com.example.maths.MainActivity.Companion.gameTime
+import com.example.maths.databinding.FragmentGameOverBinding
 
 class GameOverFragment: Fragment() {
     private var _binding: FragmentGameOverBinding? = null
@@ -45,29 +37,13 @@ class GameOverFragment: Fragment() {
             binding.scoreText.isInvisible = false
             binding.highScore.isInvisible = false
 
-//            saveTimes()
+            val recordDao = db!!.recordDao()
+            val currentFastestTime: Long = recordDao.getFastestTime(difficulty, gameMode).gameTime
+
             val gameTimeFormatted = formatTime(gameTime)
 
-            if (gameMode == 0) {
-                if (difficulty == 1 && (gameTime < bestTimeHard || bestTimeHard.compareTo(0) == 0)) {
-                    bestTimeHard = gameTime
-                    bestTimeHardString = gameTimeFormatted
-                    saveTimes()
-                } else if (difficulty == 0 && (gameTime < bestTimeEasy || bestTimeEasy.compareTo(0) == 0)) {
-                    bestTimeEasy = gameTime
-                    bestTimeEasyString = gameTimeFormatted
-                    saveTimes()
-                }
-            } else {
-                if (difficulty == 1 && (gameTime < bestAudioTimeHard || bestAudioTimeHard.compareTo(0) == 0)) {
-                    bestAudioTimeHard = gameTime
-                    bestAudioTimeHardString = gameTimeFormatted
-                    saveTimes()
-                } else if (difficulty == 0 && (gameTime < bestAudioTimeEasy || bestAudioTimeEasy.compareTo(0) == 0)) {
-                    bestAudioTimeEasy = gameTime
-                    bestAudioTimeEasyString = gameTimeFormatted
-                    saveTimes()
-                }
+            if (gameTime < currentFastestTime || currentFastestTime.compareTo(0) == 0) {
+                saveTimes()
             }
 
             binding.highScore.text = gameTimeFormatted

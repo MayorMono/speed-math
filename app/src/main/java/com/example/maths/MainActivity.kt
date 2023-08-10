@@ -15,22 +15,27 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
-import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
-import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
-import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
-import com.example.maths.SpeedMath.Companion.bestTimeEasy
-import com.example.maths.SpeedMath.Companion.bestTimeEasyString
-import com.example.maths.SpeedMath.Companion.bestTimeHard
-import com.example.maths.SpeedMath.Companion.bestTimeHardString
-import com.example.maths.SpeedMath.Companion.difficulty
-import com.example.maths.SpeedMath.Companion.gameMode
 import com.example.maths.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+    companion object {
+        var bestTimeHard: Long = 0
+        var bestTimeHardString: String = ""
+        var bestTimeEasy: Long = 0
+        var bestTimeEasyString: String = ""
+        var bestAudioTimeHard: Long = 0
+        var bestAudioTimeEasy: Long = 0
+        var bestAudioTimeHardString: String = ""
+        var bestAudioTimeEasyString: String = ""
+        var currScore = 0
+        var difficulty = 0
+        var gameMode = 0
+        var gameTime: Long = 0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
