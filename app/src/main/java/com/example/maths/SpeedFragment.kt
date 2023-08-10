@@ -62,9 +62,9 @@ class SpeedFragment : Fragment() {
     }
 
     private fun constructGraph(difficulty: Int, gameMode: Int) {
-        val recordDao = SpeedMath.db!!.recordDao()
-        val records = recordDao.getFastestTimeHistory(difficulty, gameMode)
-        val datasets = createLineDatasets(records)
+        val recentDao = SpeedMath.db!!.recentDao()
+        val recentGames = recentDao.getHistory(difficulty, gameMode)
+        val datasets = createLineDatasets(recentGames)
 
         val data = LineData(datasets)
         binding.speedGraph.data = data
@@ -81,7 +81,7 @@ class SpeedFragment : Fragment() {
         binding.speedGraph.description.text = "Questions Per Second"
     }
 
-    private fun createLineDatasets(records: List<Record>): ArrayList<ILineDataSet> {
+    private fun createLineDatasets(games: List<Recent>): ArrayList<ILineDataSet> {
         val sets: ArrayList<ILineDataSet> = arrayListOf()
 
         val addSpeeds: ArrayList<Entry> = arrayListOf()
@@ -89,13 +89,13 @@ class SpeedFragment : Fragment() {
         val mulSpeeds: ArrayList<Entry> = arrayListOf()
         val divSpeeds: ArrayList<Entry> = arrayListOf()
 
-        for (i in records.lastIndex downTo 0) {
-            val dateTime = records[i].dateTime.toFloat()
+        for (game: Recent in games) {
+            val dateTime = game.dateTime.toFloat()
 
-            addSpeeds.add(Entry(dateTime, records[i].addSpeed.toFloat()))
-            subSpeeds.add(Entry(dateTime, records[i].subSpeed.toFloat()))
-            mulSpeeds.add(Entry(dateTime, records[i].mulSpeed.toFloat()))
-            divSpeeds.add(Entry(dateTime, records[i].divSpeed.toFloat()))
+            addSpeeds.add(Entry(dateTime, game.addSpeed.toFloat()))
+            subSpeeds.add(Entry(dateTime, game.subSpeed.toFloat()))
+            mulSpeeds.add(Entry(dateTime, game.mulSpeed.toFloat()))
+            divSpeeds.add(Entry(dateTime, game.divSpeed.toFloat()))
         }
 
         val lineWidth = 3f
