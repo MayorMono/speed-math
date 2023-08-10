@@ -37,15 +37,9 @@ class GameOverFragment: Fragment() {
             binding.scoreText.isInvisible = false
             binding.highScore.isInvisible = false
 
-            val recordDao = db!!.recordDao()
-            val currentFastestTime: Long = recordDao.getFastestTime(difficulty, gameMode).gameTime
+            updateDatabase()
 
             val gameTimeFormatted = formatTime(gameTime)
-
-            if (gameTime < currentFastestTime || currentFastestTime.compareTo(0) == 0) {
-                saveTimes()
-            }
-
             binding.highScore.text = gameTimeFormatted
 
             if (difficulty == 0) {
@@ -61,22 +55,32 @@ class GameOverFragment: Fragment() {
         return binding.root
     }
 
-    private fun saveTimes() {
+    private fun updateDatabase() {
         val recordDao = db!!.recordDao()
-
-//        val prevFastest = recordDao.getFastestTime(difficulty, gameMode)
-//        recordDao.deleteRecord(prevFastest)
+        val recentDao = db!!.recentDao()
 
         val addSpeed: Double = calculateSpeed(addTimes)
         val subSpeed: Double = calculateSpeed(subTimes)
         val mulSpeed: Double = calculateSpeed(mulTimes)
         val divSpeed: Double = calculateSpeed(divTimes)
 
-        recordDao.insertRecord(Record(gameTime, System.currentTimeMillis(), difficulty, gameMode, addSpeed, subSpeed, mulSpeed, divSpeed))
+        val currentDateTimeMs = System.currentTimeMillis()
+
+        if (recentDao.getCount(difficulty, gameMode).compareTo(100) == 0) {
+            recentDao.deleteLeastRecent(difficulty, gameMode)
+        }
+
+        recentDao.insert(Recent(gameTime, currentDateTimeMs, difficulty, gameMode, addSpeed, subSpeed, mulSpeed, divSpeed))
+
+        val currentFastestTime: Long = recordDao.getFastestTime(difficulty, gameMode).gameTime
+
+        if (gameTime < currentFastestTime || currentFastestTime.compareTo(0) == 0) {
+            recordDao.insertRecord(Record(gameTime, currentDateTimeMs, difficulty, gameMode, addSpeed, subSpeed, mulSpeed, divSpeed))
+        }
     }
 
     private fun calculateSpeed(times: ArrayList<Long>): Double {
-        if (times.size == 0) {
+        if (times.isEmpty()) {
             return 0.0
         }
 
