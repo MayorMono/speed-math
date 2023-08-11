@@ -121,7 +121,7 @@ class TimeAdapter(private val context: Context, private val data: List<Record>):
         val entry = records[position]
 
         gameTime!!.text = formatTime(entry.gameTime)
-        dateTime!!.text = formatDate(entry.dateTime)
+        dateTime!!.text = formatDate(entry.dateTime, true)
 
         return cv
     }

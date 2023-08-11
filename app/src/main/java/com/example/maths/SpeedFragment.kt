@@ -10,6 +10,7 @@ import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.maths.SpeedMath.Companion.formatDate
+import com.example.maths.SpeedMath.Companion.timestampToBeginningOfDay
 import com.example.maths.databinding.FragmentSpeedBinding
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -21,6 +22,9 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class SpeedFragment : Fragment() {
+
+    private var gameMode = 0
+    private var difficulty = 0
 
     private var _binding: FragmentSpeedBinding? = null
 
@@ -64,27 +68,64 @@ class SpeedFragment : Fragment() {
     private fun constructGraph(difficulty: Int, gameMode: Int) {
         val recentDao = SpeedMath.db!!.recentDao()
         val recentGames = recentDao.getHistory(difficulty, gameMode)
-        val datasets = createLineDatasets(recentGames)
 
-        val data = LineData(datasets)
+        val daySpeedEntries = getDaySpeedEntries(recentGames)
 
-        data.setDrawValues(false)
+        if (daySpeedEntries.isNotEmpty()) {
+            val dateTimeGraphOffset = daySpeedEntries[0].dateTime
 
-        binding.speedGraph.data = data
-        binding.speedGraph.xAxis.valueFormatter = XAxisDateFormatter()
-        binding.speedGraph.xAxis.labelRotationAngle = -45f
+            val datasets = createLineDatasets(daySpeedEntries)
 
-        val grey = Color.rgb(128, 128, 128)
-        binding.speedGraph.axisLeft.textColor = grey
-        binding.speedGraph.axisRight.textColor = grey
-        binding.speedGraph.xAxis.textColor = grey
-        binding.speedGraph.legend.textColor = grey
-        binding.speedGraph.description.textColor = grey
+            val data = LineData(datasets)
 
-        binding.speedGraph.description.text = "Questions Per Second"
+            data.setDrawValues(false)
+
+            binding.speedGraph.data = data
+            binding.speedGraph.xAxis.valueFormatter = XAxisDateFormatter(dateTimeGraphOffset)
+            binding.speedGraph.xAxis.labelRotationAngle = -45f
+
+            val grey = Color.rgb(128, 128, 128)
+            binding.speedGraph.axisLeft.textColor = grey
+            binding.speedGraph.axisRight.textColor = grey
+            binding.speedGraph.xAxis.textColor = grey
+            binding.speedGraph.legend.textColor = grey
+            binding.speedGraph.description.textColor = grey
+
+            binding.speedGraph.xAxis.isGranularityEnabled = true
+            binding.speedGraph.xAxis.granularity = 86400000f
+
+            binding.speedGraph.description.text = "Questions Per Second"
+        }
+
     }
 
-    private fun createLineDatasets(games: List<Recent>): ArrayList<ILineDataSet> {
+    private fun getDaySpeedEntries(games: List<Recent>): ArrayList<DaySpeedEntry> {
+
+        val speedEntries: ArrayList<DaySpeedEntry> = ArrayList()
+        var prevDateTime: Long = 0
+
+        for (game: Recent in games) {
+            val roundedTimestamp: Long = timestampToBeginningOfDay(game.dateTime)
+
+            if (roundedTimestamp.compareTo(prevDateTime) == 0) {
+                speedEntries[speedEntries.size - 1].numGames++
+                speedEntries[speedEntries.size - 1].addSpeedSum += game.addSpeed
+                speedEntries[speedEntries.size - 1].subSpeedSum += game.subSpeed
+                speedEntries[speedEntries.size - 1].mulSpeedSum += game.mulSpeed
+                speedEntries[speedEntries.size - 1].divSpeedSum += game.divSpeed
+            } else {
+                speedEntries.add(DaySpeedEntry(roundedTimestamp, 1, game.addSpeed, game.subSpeed, game.mulSpeed, game.divSpeed))
+                prevDateTime = roundedTimestamp
+            }
+        }
+
+        return speedEntries
+    }
+
+    private fun createLineDatasets(daySpeedEntries: List<DaySpeedEntry>): ArrayList<ILineDataSet> {
+        // Offset to dateTime value to ensure earliest date is at x = 0 on graph
+        val dateTimeGraphOffset = daySpeedEntries[0].dateTime
+
         val sets: ArrayList<ILineDataSet> = arrayListOf()
 
         val addSpeeds: ArrayList<Entry> = arrayListOf()
@@ -92,13 +133,14 @@ class SpeedFragment : Fragment() {
         val mulSpeeds: ArrayList<Entry> = arrayListOf()
         val divSpeeds: ArrayList<Entry> = arrayListOf()
 
-        for (game: Recent in games) {
-            val dateTime = game.dateTime.toFloat()
+        for (daySpeedEntry: DaySpeedEntry in daySpeedEntries) {
+            val dateTime = daySpeedEntry.dateTime.toFloat()
+            val numGames = daySpeedEntry.numGames
 
-            addSpeeds.add(Entry(dateTime, game.addSpeed.toFloat()))
-            subSpeeds.add(Entry(dateTime, game.subSpeed.toFloat()))
-            mulSpeeds.add(Entry(dateTime, game.mulSpeed.toFloat()))
-            divSpeeds.add(Entry(dateTime, game.divSpeed.toFloat()))
+            addSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.addSpeedSum / numGames).toFloat()))
+            subSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.subSpeedSum / numGames).toFloat()))
+            mulSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.mulSpeedSum / numGames).toFloat()))
+            divSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.divSpeedSum / numGames).toFloat()))
         }
 
         val lineWidth = 3f
@@ -129,8 +171,6 @@ class SpeedFragment : Fragment() {
 
     private fun onCheckedChanged(): CompoundButton.OnCheckedChangeListener {
         return CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
-            var gameMode = 0
-            var difficulty = 0
 
             when (buttonView.id) {
                 R.id.mode_switch -> {
@@ -156,10 +196,20 @@ class SpeedFragment : Fragment() {
     }
 }
 
-class XAxisDateFormatter: IndexAxisValueFormatter() {
+class XAxisDateFormatter(private val offset: Long): IndexAxisValueFormatter() {
     @Override
     override fun getFormattedValue(value: Float): String {
-        val ms = value.toLong()
-        return formatDate(ms)
+        val ms = value.toLong() + offset
+        return formatDate(ms, false)
     }
 }
+
+data class DaySpeedEntry (
+    val dateTime: Long,
+    var numGames: Int,
+
+    var addSpeedSum: Double,
+    var subSpeedSum: Double,
+    var mulSpeedSum: Double,
+    var divSpeedSum: Double
+)

@@ -3,7 +3,6 @@ package com.example.maths
 import android.app.Application
 import android.speech.tts.TextToSpeech
 import androidx.room.Room
-import java.io.FileNotFoundException
 import java.text.DateFormat
 import java.text.DateFormat.SHORT
 import java.util.Date
@@ -31,10 +30,25 @@ class SpeedMath: Application() {
             return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
         }
 
-        fun formatDate(ms: Long) : String {
-            val df: DateFormat = DateFormat.getDateTimeInstance(SHORT, SHORT)
+        fun formatDate(ms: Long, includeTime: Boolean) : String {
+
+            val df: DateFormat = if (includeTime) {
+                DateFormat.getDateTimeInstance(SHORT, SHORT)
+            } else {
+                DateFormat.getDateInstance(SHORT)
+            }
+
             val resultDate = Date(ms)
             return df.format(resultDate)
+        }
+
+        fun timestampToBeginningOfDay(ms: Long) : Long {
+            val df: DateFormat = DateFormat.getDateInstance(SHORT)
+            val date = Date(ms)
+            val dateStr = df.format(date)
+
+            val dt: Date? = df.parse(dateStr)
+            return dt!!.time
         }
 
         var tts: TextToSpeech? = null
