@@ -26,6 +26,11 @@ class SpeedFragment : Fragment() {
     private var gameMode = 0
     private var difficulty = 0
 
+    // Offset to dateTime value to ensure earliest date is at x = 0 on graph, and scaling constant
+    // to ensure number of days since first game played is scaled to 1 unit on graph
+    private var dateTimeGraphOffset: Long = 0
+    private var dateTimeGraphScale: Long = 1
+
     private var _binding: FragmentSpeedBinding? = null
 
     // This property is only valid between onCreateView and
@@ -72,7 +77,7 @@ class SpeedFragment : Fragment() {
         val daySpeedEntries = getDaySpeedEntries(recentGames)
 
         if (daySpeedEntries.isNotEmpty()) {
-            val dateTimeGraphOffset = daySpeedEntries[0].dateTime
+            dateTimeGraphOffset = daySpeedEntries[0].dateTime
 
             val datasets = createLineDatasets(daySpeedEntries)
 
@@ -81,7 +86,7 @@ class SpeedFragment : Fragment() {
             data.setDrawValues(false)
 
             binding.speedGraph.data = data
-            binding.speedGraph.xAxis.valueFormatter = XAxisDateFormatter(dateTimeGraphOffset)
+            binding.speedGraph.xAxis.valueFormatter = XAxisDateFormatter(dateTimeGraphOffset, dateTimeGraphScale)
             binding.speedGraph.xAxis.labelRotationAngle = -45f
 
             val grey = Color.rgb(128, 128, 128)
@@ -92,7 +97,7 @@ class SpeedFragment : Fragment() {
             binding.speedGraph.description.textColor = grey
 
             binding.speedGraph.xAxis.isGranularityEnabled = true
-            binding.speedGraph.xAxis.granularity = 86400000f
+            binding.speedGraph.xAxis.granularity = 1f
 
             binding.speedGraph.description.text = "Questions Per Second"
         }
@@ -123,8 +128,7 @@ class SpeedFragment : Fragment() {
     }
 
     private fun createLineDatasets(daySpeedEntries: List<DaySpeedEntry>): ArrayList<ILineDataSet> {
-        // Offset to dateTime value to ensure earliest date is at x = 0 on graph
-        val dateTimeGraphOffset = daySpeedEntries[0].dateTime
+        dateTimeGraphOffset = daySpeedEntries[0].dateTime
 
         val sets: ArrayList<ILineDataSet> = arrayListOf()
 
@@ -133,14 +137,20 @@ class SpeedFragment : Fragment() {
         val mulSpeeds: ArrayList<Entry> = arrayListOf()
         val divSpeeds: ArrayList<Entry> = arrayListOf()
 
-        for (daySpeedEntry: DaySpeedEntry in daySpeedEntries) {
-            val dateTime = daySpeedEntry.dateTime.toFloat()
-            val numGames = daySpeedEntry.numGames
+        dateTimeGraphScale = if (daySpeedEntries.size > 1) {
+            daySpeedEntries[1].dateTime - dateTimeGraphOffset
+        } else {
+            1
+        }
 
-            addSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.addSpeedSum / numGames).toFloat()))
-            subSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.subSpeedSum / numGames).toFloat()))
-            mulSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.mulSpeedSum / numGames).toFloat()))
-            divSpeeds.add(Entry(dateTime - dateTimeGraphOffset, (daySpeedEntry.divSpeedSum / numGames).toFloat()))
+        for (i in daySpeedEntries.indices) {
+            val dateTime = ((daySpeedEntries[i].dateTime - dateTimeGraphOffset) / dateTimeGraphScale).toFloat()
+            val numGames = daySpeedEntries[i].numGames
+
+            addSpeeds.add(Entry(dateTime, (daySpeedEntries[i].addSpeedSum / numGames).toFloat()))
+            subSpeeds.add(Entry(dateTime, (daySpeedEntries[i].subSpeedSum / numGames).toFloat()))
+            mulSpeeds.add(Entry(dateTime, (daySpeedEntries[i].mulSpeedSum / numGames).toFloat()))
+            divSpeeds.add(Entry(dateTime, (daySpeedEntries[i].divSpeedSum / numGames).toFloat()))
         }
 
         val lineWidth = 3f
@@ -196,10 +206,10 @@ class SpeedFragment : Fragment() {
     }
 }
 
-class XAxisDateFormatter(private val offset: Long): IndexAxisValueFormatter() {
+class XAxisDateFormatter(private val offset: Long, private val scale: Long): IndexAxisValueFormatter() {
     @Override
     override fun getFormattedValue(value: Float): String {
-        val ms = value.toLong() + offset
+        val ms = (value.toLong() * scale) + offset
         return formatDate(ms, false)
     }
 }
