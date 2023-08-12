@@ -153,23 +153,15 @@ class SpeedFragment : Fragment() {
             divSpeeds.add(Entry(dateTime, (daySpeedEntries[i].divSpeedSum / numGames).toFloat()))
         }
 
-        val lineWidth = 3f
-
         val addSet = LineDataSet(addSpeeds, "Addition")
-        addSet.color = Color.RED
-        addSet.lineWidth = lineWidth
-
         val subSet = LineDataSet(subSpeeds, "Subtraction")
-        subSet.color = Color.GREEN
-        subSet.lineWidth = lineWidth
-
         val mulSet = LineDataSet(mulSpeeds, "Multiplication")
-        mulSet.color = Color.BLUE
-        mulSet.lineWidth = lineWidth
-
         val divSet = LineDataSet(divSpeeds, "Subtraction")
-        divSet.color = Color.MAGENTA
-        divSet.lineWidth = lineWidth
+
+        formatLine(addSet, Color.RED)
+        formatLine(subSet, Color.GREEN)
+        formatLine(mulSet, Color.BLUE)
+        formatLine(divSet, Color.MAGENTA)
 
         sets.add(addSet)
         sets.add(subSet)
@@ -177,6 +169,16 @@ class SpeedFragment : Fragment() {
         sets.add(divSet)
 
         return sets
+    }
+
+    private fun formatLine(set: LineDataSet, color: Int) {
+        val lineWidth = 3f
+        val circleRadius = 5f
+
+        set.color = color
+        set.setCircleColor(color)
+        set.lineWidth = lineWidth
+        set.circleRadius = circleRadius
     }
 
     private fun onCheckedChanged(): CompoundButton.OnCheckedChangeListener {
