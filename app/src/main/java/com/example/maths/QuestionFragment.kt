@@ -16,7 +16,7 @@ import com.example.maths.MainActivity.Companion.currScore
 import com.example.maths.MainActivity.Companion.difficulty
 import com.example.maths.MainActivity.Companion.gameMode
 import com.example.maths.MainActivity.Companion.gameTime
-import com.example.maths.SpeedMath.Companion.tts
+import com.example.maths.MainActivity.Companion.tts
 import com.example.maths.databinding.FragmentQuestionBinding
 
 /**
