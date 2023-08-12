@@ -14,7 +14,7 @@
             android:exported="false"
             android:label="@string/title_activity_stats"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Maths" />
+            android:theme="@style/Theme.Maths.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
