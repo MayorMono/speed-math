@@ -2,6 +2,7 @@ package com.example.maths
 
 import android.app.Application
 import android.speech.tts.TextToSpeech
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.room.Room
 import java.text.DateFormat
 import java.text.DateFormat.SHORT
@@ -64,6 +65,7 @@ class SpeedMath: Application() {
             AppDatabase::class.java, "sm-database"
         ).allowMainThreadQueries().build()
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
     }
 
 }
