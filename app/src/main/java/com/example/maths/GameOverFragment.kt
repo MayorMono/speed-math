@@ -66,10 +66,6 @@ class GameOverFragment: Fragment() {
 
         val currentDateTimeMs = System.currentTimeMillis()
 
-        if (recentDao.getCount(difficulty, gameMode).compareTo(100) == 0) {
-            recentDao.deleteLeastRecent(difficulty, gameMode)
-        }
-
         recentDao.insert(Recent(gameTime, currentDateTimeMs, difficulty, gameMode, addSpeed, subSpeed, mulSpeed, divSpeed))
 
         val currentFastestTime: Long = recordDao.getFastestTime(difficulty, gameMode).gameTime
