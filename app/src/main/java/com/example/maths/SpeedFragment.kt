@@ -113,13 +113,54 @@ class SpeedFragment : Fragment() {
             val roundedTimestamp: Long = timestampToBeginningOfDay(game.dateTime)
 
             if (roundedTimestamp.compareTo(prevDateTime) == 0) {
-                speedEntries[speedEntries.size - 1].numGames++
-                speedEntries[speedEntries.size - 1].addSpeedSum += game.addSpeed
-                speedEntries[speedEntries.size - 1].subSpeedSum += game.subSpeed
-                speedEntries[speedEntries.size - 1].mulSpeedSum += game.mulSpeed
-                speedEntries[speedEntries.size - 1].divSpeedSum += game.divSpeed
+                if (game.addSpeed > 0.0) {
+                    speedEntries[speedEntries.size - 1].addSpeedSum += game.addSpeed
+                    speedEntries[speedEntries.size - 1].numAddGames++
+                }
+
+                if (game.subSpeed > 0.0) {
+                    speedEntries[speedEntries.size - 1].subSpeedSum += game.subSpeed
+                    speedEntries[speedEntries.size - 1].numSubGames++
+                }
+
+                if (game.mulSpeed > 0.0) {
+                    speedEntries[speedEntries.size - 1].mulSpeedSum += game.mulSpeed
+                    speedEntries[speedEntries.size - 1].numMulGames++
+                }
+
+                if (game.divSpeed > 0.0) {
+                    speedEntries[speedEntries.size - 1].divSpeedSum += game.divSpeed
+                    speedEntries[speedEntries.size - 1].numDivGames++
+                }
+
             } else {
-                speedEntries.add(DaySpeedEntry(roundedTimestamp, 1, game.addSpeed, game.subSpeed, game.mulSpeed, game.divSpeed))
+                val numAddGames = if (game.addSpeed > 0.0) {
+                    1
+                } else {
+                    0
+                }
+
+                val numSubGames = if (game.subSpeed > 0.0) {
+                    1
+                } else {
+                    0
+                }
+
+                val numMulGames = if (game.mulSpeed > 0.0) {
+                    1
+                } else {
+                    0
+                }
+
+                val numDivGames = if (game.divSpeed > 0.0) {
+                    1
+                } else {
+                    0
+                }
+
+                speedEntries.add(DaySpeedEntry(roundedTimestamp,
+                    numAddGames, numSubGames, numMulGames, numDivGames,
+                    game.addSpeed, game.subSpeed, game.mulSpeed, game.divSpeed))
                 prevDateTime = roundedTimestamp
             }
         }
@@ -145,12 +186,22 @@ class SpeedFragment : Fragment() {
 
         for (i in daySpeedEntries.indices) {
             val dateTime = ((daySpeedEntries[i].dateTime - dateTimeGraphOffset) / dateTimeGraphScale).toFloat()
-            val numGames = daySpeedEntries[i].numGames
 
-            addSpeeds.add(Entry(dateTime, (daySpeedEntries[i].addSpeedSum / numGames).toFloat()))
-            subSpeeds.add(Entry(dateTime, (daySpeedEntries[i].subSpeedSum / numGames).toFloat()))
-            mulSpeeds.add(Entry(dateTime, (daySpeedEntries[i].mulSpeedSum / numGames).toFloat()))
-            divSpeeds.add(Entry(dateTime, (daySpeedEntries[i].divSpeedSum / numGames).toFloat()))
+            if (daySpeedEntries[i].numAddGames > 0) {
+                addSpeeds.add(Entry(dateTime, (daySpeedEntries[i].addSpeedSum / daySpeedEntries[i].numAddGames).toFloat()))
+            }
+
+            if (daySpeedEntries[i].numSubGames > 0) {
+                subSpeeds.add(Entry(dateTime, (daySpeedEntries[i].subSpeedSum / daySpeedEntries[i].numSubGames).toFloat()))
+            }
+
+            if (daySpeedEntries[i].numMulGames > 0) {
+                mulSpeeds.add(Entry(dateTime, (daySpeedEntries[i].mulSpeedSum / daySpeedEntries[i].numMulGames).toFloat()))
+            }
+
+            if (daySpeedEntries[i].numDivGames > 0) {
+                divSpeeds.add(Entry(dateTime, (daySpeedEntries[i].divSpeedSum / daySpeedEntries[i].numDivGames).toFloat()))
+            }
         }
 
         val addSet = LineDataSet(addSpeeds, "Addition")
@@ -218,7 +269,12 @@ class XAxisDateFormatter(private val offset: Long, private val scale: Long): Ind
 
 data class DaySpeedEntry (
     val dateTime: Long,
-    var numGames: Int,
+
+    // Number of games that have addition questions, subtraction questions, etc
+    var numAddGames: Int,
+    var numSubGames: Int,
+    var numMulGames: Int,
+    var numDivGames: Int,
 
     var addSpeedSum: Double,
     var subSpeedSum: Double,
