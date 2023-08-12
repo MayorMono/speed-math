@@ -3,23 +3,13 @@ package com.example.maths
 import android.app.Application
 import android.speech.tts.TextToSpeech
 import androidx.room.Room
-import java.io.FileNotFoundException
+import java.text.DateFormat
+import java.text.DateFormat.SHORT
+import java.util.Date
 
 class SpeedMath: Application() {
 
     companion object {
-        var bestTimeHard: Long = 0
-        var bestTimeHardString: String = ""
-        var bestTimeEasy: Long = 0
-        var bestTimeEasyString: String = ""
-        var bestAudioTimeHard: Long = 0
-        var bestAudioTimeEasy: Long = 0
-        var bestAudioTimeHardString: String = ""
-        var bestAudioTimeEasyString: String = ""
-        var currScore = 0
-        var difficulty = 0
-        var gameMode = 0
-        var gameTime: Long = 0
 
         fun formatTime(ms: Long): String {
             val minutes = ms / 1000 /60
@@ -40,6 +30,27 @@ class SpeedMath: Application() {
             return stringMinutes.plus(":").plus(stringSeconds).plus(decimalStringHard)
         }
 
+        fun formatDate(ms: Long, includeTime: Boolean) : String {
+
+            val df: DateFormat = if (includeTime) {
+                DateFormat.getDateTimeInstance(SHORT, SHORT)
+            } else {
+                DateFormat.getDateInstance(SHORT)
+            }
+
+            val resultDate = Date(ms)
+            return df.format(resultDate)
+        }
+
+        fun timestampToBeginningOfDay(ms: Long) : Long {
+            val df: DateFormat = DateFormat.getDateInstance(SHORT)
+            val date = Date(ms)
+            val dateStr = df.format(date)
+
+            val dt: Date? = df.parse(dateStr)
+            return dt!!.time
+        }
+
         var tts: TextToSpeech? = null
         var db: AppDatabase? = null
     }
@@ -53,36 +64,6 @@ class SpeedMath: Application() {
             AppDatabase::class.java, "sm-database"
         ).allowMainThreadQueries().build()
 
-        try {
-            loadHighScore()
-        } catch (e: FileNotFoundException) {
-            // File not found
-        }
     }
-
-    private fun loadHighScore() {
-        val recordDao = db!!.recordDao()
-        val scores = recordDao.getAllFastestTimes()
-        for (score in scores) {
-            if (score.gameMode == 0) {
-                if (score.difficulty == 0) {
-                    bestTimeEasy = score.gameTime
-                } else {
-                    bestTimeHard = score.gameTime
-                }
-            } else {
-                if (score.difficulty == 0) {
-                    bestAudioTimeEasy = score.gameTime
-                } else{
-                    bestAudioTimeHard = score.gameTime
-                }
-            }
-            bestTimeHardString = formatTime(bestTimeHard)
-            bestTimeEasyString = formatTime(bestTimeEasy)
-            bestAudioTimeEasyString = formatTime(bestAudioTimeEasy)
-            bestAudioTimeHardString = formatTime(bestAudioTimeHard)
-        }
-    }
-
 
 }

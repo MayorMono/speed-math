@@ -12,13 +12,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.maths.SpeedMath.Companion.currScore
-import com.example.maths.SpeedMath.Companion.difficulty
-import com.example.maths.SpeedMath.Companion.gameMode
-import com.example.maths.SpeedMath.Companion.gameTime
+import com.example.maths.MainActivity.Companion.currScore
+import com.example.maths.MainActivity.Companion.difficulty
+import com.example.maths.MainActivity.Companion.gameMode
+import com.example.maths.MainActivity.Companion.gameTime
 import com.example.maths.SpeedMath.Companion.tts
 import com.example.maths.databinding.FragmentQuestionBinding
-import java.util.Locale
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -34,6 +33,13 @@ class QuestionFragment : Fragment() {
         private var second = 0
         private var operation: String = "+"
         private var currAnswer = 0
+
+        private var questionStartTime: Long = 0
+
+        lateinit var addTimes: ArrayList<Long>
+        lateinit var subTimes: ArrayList<Long>
+        lateinit var mulTimes: ArrayList<Long>
+        lateinit var divTimes: ArrayList<Long>
     }
 
     // This property is only valid between onCreateView and
@@ -52,6 +58,11 @@ class QuestionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        addTimes = arrayListOf()
+        subTimes = arrayListOf()
+        mulTimes = arrayListOf()
+        divTimes = arrayListOf()
 
         currScore = 0
         binding.currScore.text = currScore.toString().plus("/20")
@@ -112,6 +123,8 @@ class QuestionFragment : Fragment() {
         binding.firstNumber.text = first.toString()
         binding.secondNumber.text = second.toString()
         binding.operation.text = operation
+
+        questionStartTime = SystemClock.elapsedRealtime()
 
         if (gameMode == 1) {
             speakQuestion()
@@ -189,6 +202,23 @@ class QuestionFragment : Fragment() {
 
     private fun submitAnswer(view: View) {
         if (binding.userAnswer.text.toString().toInt() == currAnswer) {
+            val questionTime = SystemClock.elapsedRealtime() - questionStartTime
+
+            when (operation) {
+                "x" -> {
+                    mulTimes.add(questionTime)
+                }
+                "+" -> {
+                    addTimes.add(questionTime)
+                }
+                "-" -> {
+                    subTimes.add(questionTime)
+                }
+                else -> {
+                    divTimes.add(questionTime)
+                }
+            }
+
             currScore++
             binding.userAnswer.text.clear()
             binding.currScore.text = currScore.toString().plus("/20")

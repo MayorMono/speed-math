@@ -1,27 +1,26 @@
 package com.example.maths
 
+import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isInvisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.maths.SpeedMath.Companion.bestAudioTimeEasy
-import com.example.maths.SpeedMath.Companion.bestAudioTimeEasyString
-import com.example.maths.SpeedMath.Companion.bestAudioTimeHard
-import com.example.maths.SpeedMath.Companion.bestAudioTimeHardString
-import com.example.maths.SpeedMath.Companion.bestTimeEasy
-import com.example.maths.SpeedMath.Companion.bestTimeEasyString
-import com.example.maths.SpeedMath.Companion.bestTimeHard
-import com.example.maths.SpeedMath.Companion.bestTimeHardString
-import com.example.maths.SpeedMath.Companion.difficulty
-import com.example.maths.SpeedMath.Companion.formatTime
-import com.example.maths.SpeedMath.Companion.gameMode
+import com.example.maths.MainActivity.Companion.bestAudioTimeEasy
+import com.example.maths.MainActivity.Companion.bestAudioTimeEasyString
+import com.example.maths.MainActivity.Companion.bestAudioTimeHard
+import com.example.maths.MainActivity.Companion.bestAudioTimeHardString
+import com.example.maths.MainActivity.Companion.bestTimeEasy
+import com.example.maths.MainActivity.Companion.bestTimeEasyString
+import com.example.maths.MainActivity.Companion.bestTimeHard
+import com.example.maths.MainActivity.Companion.bestTimeHardString
+import com.example.maths.MainActivity.Companion.difficulty
+import com.example.maths.MainActivity.Companion.gameMode
 import com.example.maths.SpeedMath.Companion.tts
 import com.example.maths.databinding.FragmentTitleBinding
-import java.io.FileNotFoundException
 import java.util.Locale
 
 /**
@@ -47,6 +46,8 @@ class TitleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadHighScore()
 
         if (gameMode == 0) {
             binding.textMode.isChecked = true
@@ -76,6 +77,12 @@ class TitleFragment : Fragment() {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
+        binding.buttonStats.setOnClickListener {
+            val switchActivityIntent = Intent(context, StatsActivity::class.java)
+            startActivity(switchActivityIntent)
+            activity?.finish()
+        }
+
         if (tts == null) {
             tts = TextToSpeech(activity, TextToSpeech.OnInitListener { status ->
                 if (status != TextToSpeech.ERROR) {
@@ -89,5 +96,29 @@ class TitleFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun loadHighScore() {
+        val recordDao = SpeedMath.db!!.recordDao()
+        val scores = recordDao.getAllFastestTimes()
+        for (score in scores) {
+            if (score.gameMode == 0) {
+                if (score.difficulty == 0) {
+                    bestTimeEasy = score.gameTime
+                } else {
+                    bestTimeHard = score.gameTime
+                }
+            } else {
+                if (score.difficulty == 0) {
+                    bestAudioTimeEasy = score.gameTime
+                } else{
+                    bestAudioTimeHard = score.gameTime
+                }
+            }
+            bestTimeHardString = SpeedMath.formatTime(bestTimeHard)
+            bestTimeEasyString = SpeedMath.formatTime(bestTimeEasy)
+            bestAudioTimeEasyString = SpeedMath.formatTime(bestAudioTimeEasy)
+            bestAudioTimeHardString = SpeedMath.formatTime(bestAudioTimeHard)
+        }
     }
 }
