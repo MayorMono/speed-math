@@ -52,7 +52,6 @@ class SpeedMath: Application() {
             return dt!!.time
         }
 
-        var tts: TextToSpeech? = null
         var db: AppDatabase? = null
     }
 

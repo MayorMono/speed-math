@@ -1,6 +1,5 @@
 package com.example.maths
 
-import android.app.UiModeManager.MODE_NIGHT_YES
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.view.Menu
@@ -9,7 +8,6 @@ import android.view.View
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isInvisible
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -35,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         var difficulty = 0
         var gameMode = 0
         var gameTime: Long = 0
+
+        var tts: TextToSpeech? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,11 +140,12 @@ class MainActivity : AppCompatActivity() {
         // Do nothing
     }
 
-//    override fun onDestroy() {
-//        if (tts != null) {
-//            tts!!.stop()
-//            tts!!.shutdown()
-//        }
-//        super.onDestroy()
-//    }
+    override fun onDestroy() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+            tts = null
+        }
+        super.onDestroy()
+    }
 }
