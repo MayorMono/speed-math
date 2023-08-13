@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Maths</string>
+    <string name="app_name">Speed Math</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -25,7 +25,7 @@
     <string name="time_without_colon">Time</string>
     <string name="easy_complete">Easy Mode Complete</string>
     <string name="hard_complete">Hard Mode Complete</string>
-    <string name="version">1.2.0</string>
+    <string name="version">0.1.0</string>
     <string name="author">MayorMono</string>
     <string name="text_mode">Text</string>
     <string name="audio_mode">Audio</string>
