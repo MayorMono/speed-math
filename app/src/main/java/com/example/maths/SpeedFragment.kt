@@ -207,7 +207,7 @@ class SpeedFragment : Fragment() {
         val addSet = LineDataSet(addSpeeds, "Addition")
         val subSet = LineDataSet(subSpeeds, "Subtraction")
         val mulSet = LineDataSet(mulSpeeds, "Multiplication")
-        val divSet = LineDataSet(divSpeeds, "Subtraction")
+        val divSet = LineDataSet(divSpeeds, "Division")
 
         formatLine(addSet, Color.RED)
         formatLine(subSet, Color.GREEN)
