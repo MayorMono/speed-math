@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isInvisible
 import androidx.navigation.findNavController
@@ -50,6 +51,12 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         supportActionBar?.hide()
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Do nothing
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -134,10 +141,6 @@ class MainActivity : AppCompatActivity() {
                     }
             }
         }
-    }
-
-    override fun onBackPressed() {
-        // Do nothing
     }
 
     override fun onDestroy() {

@@ -1,6 +1,8 @@
 package com.example.maths
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,6 +28,14 @@ class StatsActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         supportActionBar?.hide()
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val switchActivityIntent = Intent(this@StatsActivity, MainActivity::class.java)
+                startActivity(switchActivityIntent)
+                finish()
+            }
+        })
     }
 
     override fun onSupportNavigateUp(): Boolean {
